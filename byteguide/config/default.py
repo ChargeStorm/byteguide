@@ -20,11 +20,11 @@ def get():
             "</br><ul><li>Open Source</li><li>Free</li>"
             "<li>Easy to Setup & Use</li><li>and <b>You</b> control hosting environment</li></ul>"
         ),
-        "footer": "&copy; created with <strong><span>Byte/Guide</span></strong>!  All Rights Reserved",
+        "footer": "",
         "host": "127.0.0.1",
         "port": 29000,
         "debug": False,
-        "readonly": True,
+        "readonly": False,
         "disable_delete": False,
         "max_content_mb": 10,
         "enable_email_notification": False,

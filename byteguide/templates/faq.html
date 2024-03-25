@@ -1,28 +1,24 @@
 {% extends 'base.html' %}
-
 {% block body %}
-
-<style type="text/css">
+    <style type="text/css">
     img.resize {
         width: 80%;
         height: auto;
     }
-</style>
-
-<div class="container">
-    <h3>How to upload documentation</h3>
-    <hr />
-    <h5>First register the project / module / package</h5>
-    <div>
-        <ol>
-            <li>First step is to register the project to get the key for uploading versions.</li>
-            <li>This key is to prevent uploading version to wrong project.</li>
-            <li>Purpose of having key is to avoid genuine mistakes</li>
-            <li>If you forget the key, re-register the project and you will get the key back</li>
-        </ol>
-
-    </div>
-    <pre>
+    </style>
+    <div class="container">
+        <h3>How to upload documentation</h3>
+        <hr />
+        <h5>First register the project / module / package</h5>
+        <div>
+            <ol>
+                <li>First step is to register the project to get the key for uploading versions.</li>
+                <li>This key is to prevent uploading version to wrong project.</li>
+                <li>Purpose of having key is to avoid genuine mistakes</li>
+                <li>If you forget the key, re-register the project and you will get the key back</li>
+            </ol>
+        </div>
+        <pre>
     $ cat register.json
     {
         "name": "Sample-Proj",
@@ -43,16 +39,17 @@
         "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"       <-- unique-key to use for uploading versions.
     }
     </pre>
-    <h5>Upload version to project</h5>
-    <div>
-        <ol>
-            <li>Generate Project documentation (you can choose anything)</li>
-            <li>Create a zip file of the version</li>
-            <li>Upload using CURL</li>
-        </ol>
-    </div>
-    <b>1. create a zip file (Uses project name that was used for registration!)</b><br>
-    <pre>
+        <h5>Upload version to project</h5>
+        <div>
+            <ol>
+                <li>Generate Project documentation (you can choose anything)</li>
+                <li>Create a zip file of the version</li>
+                <li>Upload using CURL</li>
+            </ol>
+        </div>
+        <b>1. create a zip file (Uses project name that was used for registration!)</b>
+        <br>
+        <pre>
         # let's say you have generated docs in this directory.
         $ cd my_project/docs
 
@@ -71,56 +68,59 @@
 
         # Lets zip the contents
         $ zip -r my_project-0.1.0.zip *
-    </pre>
-
-    <br />
-    <b>2. Upload the zip file</b><br /><br />
-    <img src="{{ url_for('static', filename='upload_zip.png')}}" class="resize" />
-    <br />
-    <hr>
-
-    <br />
-    <b>3. Check the documentation</b><br /><br />
-    <img src="{{ url_for('static', filename='landing.png')}}" class="resize" />
-    <br />
-    <hr>
-
-    <br />
-    <b>4. Browse</b><br /><br />
-    <img src="{{ url_for('static', filename='browse.png')}}" class="resize" />
-    <br />
-    <hr>
-
-    <br />
-    <b>5. Search</b><br /><br />
-    <img src="{{ url_for('static', filename='search.png')}}" class="resize" />
-    <br />
-    <hr>
-
-    <br />
-    <b>6. Changelog</b><br /><br />
-    <img src="{{ url_for('static', filename='changelog.png')}}" class="resize" />
-    <br />
-    <hr>
-
-    <br />
-    <b>7. Show</b><br /><br />
-    <img src="{{ url_for('static', filename='guide-1.png')}}" class="resize" />
-    <br />
-
-    {% if copyright %}
-    <hr>
-
-    <footer>
-        <div class="row">
-            <div class="col-lg-12">
-                <p>{{ copyright|safe }}</p>
-            </div>
-        </div>
-    </footer>
-
-    {% endif %}
-
-</div>
-
+</pre>
+        <br />
+        <b>2. Upload the zip file</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='upload_zip.png') }}"
+             class="resize" />
+        <br />
+        <hr>
+        <br />
+        <b>3. Check the documentation</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='landing.png') }}" class="resize" />
+        <br />
+        <hr>
+        <br />
+        <b>4. Browse</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='browse.png') }}" class="resize" />
+        <br />
+        <hr>
+        <br />
+        <b>5. Search</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='search.png') }}" class="resize" />
+        <br />
+        <hr>
+        <br />
+        <b>6. Changelog</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='changelog.png') }}"
+             class="resize" />
+        <br />
+        <hr>
+        <br />
+        <b>7. Show</b>
+        <br />
+        <br />
+        <img src="{{ url_for('static', filename='guide-1.png') }}" class="resize" />
+        <br />
+        {% if copyright %}
+            <hr>
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>{{ copyright|safe }}</p>
+                    </div>
+                </div>
+            </footer>
+        {% endif %}
+    </div>
 {% endblock %}

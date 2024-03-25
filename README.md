@@ -1,5 +1,5 @@
 > [!WARNING]
-> This branch contains custom configuration. This should be converted to configuration options and merged to the parent repository.
+> This branch contains custom CTEK configuration. This should be converted to configuration options and merged to the parent repository asap.
 
 
 # Byteguide

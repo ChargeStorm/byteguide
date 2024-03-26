@@ -1,0 +1,8 @@
+{
+    "name": "Sample-Proj",
+    "description": "This is a sample project",
+    "owner": "Carl Westman",
+    "owner-email": "carl.westman@ctek.com",
+    "programming-lang": "Python",
+    "tags": ["python", "sample", "project"]
+}

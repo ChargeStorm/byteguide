@@ -68,7 +68,7 @@ The following table lists the configuration properties available in `default.py`
 | `smtp_username` (unused) | The username to use for email notifications. (str, None) |
 | `smtp_password` (unused) | The password to use for email notifications. (str, None)
 
-### Running the server in production
+### Running the server with Gunicorn
 
 To run the server in production, start by setting the `BYTEGUIDE_RUNENV` environment variable to `prod`. This will enable the production settings in byteguide/config/production.py. Next run the server with gunicon using the following command:
 
@@ -77,6 +77,41 @@ poetry run gunicorn -w 2 -b 0.0.0.0:8000 start_server:app
 ```
 
 Change the number of workers and the address and port to suit your needs.
+
+#### Running the server with systemd
+
+An easy way to automatically start the server on boot is to use systemd.
+
+Create a new systemd service file in `/etc/systemd/system/byteguide.service` with the following content:
+
+```ini
+[Unit]
+Description=ByteGuide Server
+After=network.target
+
+[Service]
+User=azureuser
+Group=www-data
+WorkingDirectory=/home/azureuser/byteguide
+Environment="PATH=/home/azureuser/byteguide/.venv/bin"
+ExecStart=/home/azureuser/byteguide/.venv/bin/python -m gunicorn --workers 3 --bind 0.0.0.0:8000 start_server:app
+
+[Install]
+WantedBy=multi-user.target
+```
+
+To start the server and enable it on boot, run the following commands:
+
+```bash
+sudo systemctl start byteguide
+sudo systemctl enable byteguide
+```
+
+You can check the status of the service with `sudo systemctl status byteguide`.
+
+#### TBD: Add nginx stuff
+
+#### TBD: Add docker stuff
 
 ## Screenshots
 

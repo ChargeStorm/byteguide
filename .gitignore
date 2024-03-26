@@ -50,3 +50,4 @@ dmypy.json
 .vscode
 docs/
 static/docfiles
+poetry.toml

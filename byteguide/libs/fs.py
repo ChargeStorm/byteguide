@@ -184,7 +184,7 @@ class Uploader:
 
         if latest_link.exists():
             latest_link.unlink()
-        log.info("test")
+
         latest_link.symlink_to(proj_dir.joinpath(latest_ver))
 
     @staticmethod

@@ -2,8 +2,8 @@
 from pathlib import Path
 
 from flask import Blueprint, render_template, jsonify, redirect, request, send_from_directory
-
-from byteguide.libs.fs import docs_dir_scanner
+from loguru import logger as log
+from byteguide.libs.fs import docs_dir_scanner, MetaDataHandler
 from byteguide.config import config
 
 display_routes = Blueprint("browse", __name__, template_folder="templates", url_prefix="/browse")
@@ -30,16 +30,20 @@ def browse_proj_ver(project: str, version: str):
     Fetch the specific version of the project.
 
     Args:
-        project (str): name of the project whose latest version is to be fetched.
+        project (str): name of the project whose version is to be fetched.
         version (str): version of the project to be fetched.
 
     Example:
         GET /browse/<project>/<version>
 
     Returns:
-        Get the latest version of the project.
+        Get the specified version of the project.
     """
     info = docs_dir_scanner.get_proj_versions(project)
+    log.info(f"Fetching {project} version {version}")
+    if version == "latest":
+        version = MetaDataHandler(project).get_latest_version()
+        log.info(f"Latest version of {project} is {version}")
 
     if version in info["versions"]:
         return send_from_directory(config.docfiles_dir / project / version, "index.html")
@@ -62,14 +66,11 @@ def view(project, version):
         Get the latest version of the project.
     """
     info = docs_dir_scanner.get_proj_versions(project)
+    url = f"{request.scheme}://{request.host}/browse/{project}/{version}/"
 
-    if version in info["versions"]:
-        url = f"http://{request.host}/browse/{project}/{version}/"
-        return render_template(
-            "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version
-        )
-
-    return jsonify({"error": f"Project {project} not found"}), 404
+    return render_template(
+        "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version
+    )
 
 
 @display_routes.route("/search", methods=["GET"])

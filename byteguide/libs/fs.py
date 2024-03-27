@@ -4,6 +4,7 @@ import json
 import re
 import shutil
 import tempfile
+import os
 import typing as t
 import uuid
 import zipfile
@@ -101,25 +102,35 @@ class Uploader:
                 status = Status.ALREADY_EXISTS
 
             else:
-                if not verdir.exists():
-                    verdir.mkdir()
+                if os.path.exists(verdir):
+                    os.rmdir(verdir) # Clear possibly existing target dir
+                # shutil.rmtree(verdir, ignore_errors=True)  # Clear possibly existing target dir
+                verdir.mkdir() # Create version directory
 
                 # This is insecure, we are only accepting things from trusted sources.
                 with zipfile.ZipFile(filename) as compressed_file:
                     if self.is_valid_zip_file(compressed_file):
                         try:
                             # Extract full archive to temporary directory
-                            temp_dir = tempfile.mkdtemp()
-                            compressed_file.extractall(temp_dir)
+                            # temp_dir = tempfile.mkdtemp()
+                            # import os
+                            # log.info(f"tempdir read access: {os.access(temp_dir, os.R_OK)}")
+                            # compressed_file.extractall(temp_dir)
 
-                            shutil.rmtree(verdir)  # clear possibly existing target dir
-                            shutil.move(temp_dir, verdir)
-                            shutil.rmtree(temp_dir, ignore_errors=True)
+                            # # shutil.rmtree(verdir)  # clear possibly existing target dir
+                            # log.info(f"verdir write access: {os.access(verdir, os.W_OK)}")
+                            # shutil.copytree(temp_dir, verdir, dirs_exist_ok=True)
+                            # log.info("After move")
+                            # shutil.rmtree(temp_dir, ignore_errors=True)
+
+                            # Extract compressed file to version directory
+                            compressed_file.extractall(verdir)
 
                         except Exception as e:  # pylint: disable=broad-except
                             # Clean up the temp directory and version directory if something goes wrong
-                            shutil.rmtree(temp_dir, ignore_errors=True)
-                            shutil.rmtree(verdir, ignore_errors=True)
+                            # shutil.rmtree(temp_dir, ignore_errors=True)
+                            # shutil.rmtree(verdir, ignore_errors=True)
+                            os.rmdir(verdir) # Clean up if something goes wrong
                             log.error(e)
                             status = Status.ERROR
 
@@ -173,8 +184,8 @@ class Uploader:
 
         if latest_link.exists():
             latest_link.unlink()
-
-        latest_link.symlink_to(latest_ver)
+        log.info("test")
+        latest_link.symlink_to(proj_dir.joinpath(latest_ver))
 
     @staticmethod
     def update_version_metadata(project: str, version: str) -> str:

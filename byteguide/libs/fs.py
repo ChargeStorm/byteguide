@@ -94,6 +94,7 @@ class Uploader:
         else:
             existing_metadata = MetaDataHandler(project=name).metadata
             if existing_metadata["unique-key"] != uniq_key:
+                log.warning(f"Invalid unique key for project {name}, got {uniq_key} expected {existing_metadata['unique-key']}")
                 status = Status.INVALID_UNIQUE_KEY
 
             elif verdir.exists() and not reupload:
@@ -116,6 +117,9 @@ class Uploader:
                             shutil.rmtree(temp_dir, ignore_errors=True)
 
                         except Exception as e:  # pylint: disable=broad-except
+                            # Clean up the temp directory and version directory if something goes wrong
+                            shutil.rmtree(temp_dir, ignore_errors=True)
+                            shutil.rmtree(verdir, ignore_errors=True)
                             log.error(e)
                             status = Status.ERROR
 

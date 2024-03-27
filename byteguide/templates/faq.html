@@ -11,17 +11,13 @@
         <hr />
         <h5>First register the project / module / package</h5>
         <div>
-            <ol>
-                <li>First step is to register the project to get the key for uploading versions.</li>
-                <li>This key is to prevent uploading version to wrong project.</li>
-                <li>Purpose of having key is to avoid genuine mistakes</li>
-                <li>If you forget the key, re-register the project and you will get the key back</li>
-            </ol>
+            First step is to register the project to get the key for uploading versions. Create a json file with the following content, name and description is mandatory.
         </div>
+        <br>
         <pre>
     $ cat register.json
     {
-        "name": "Sample-Proj",
+        "name": "my-project",
         "description": "This is a sample project",
         "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
         "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
@@ -29,89 +25,47 @@
         "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
     }
 
-    # This returns a JSON response
+
     $ curl -X POST -d @register.json \
         -H 'Content-Type: application/json' \
-        http://127.0.0.1:29000/manage/register
-    {
-        "message": "project ['sample-proj'] already registered!",  <-- response text
-        "project": "Sample-Proj",                                  <-- registered proj name
+        http://10.249.1.12:8000//manage/register
+
+    # This returns a JSON response
+   {
+        "message": "project ['my-project'] already registered!",  <-- response text
+        "project": "my-project",                                  <-- registered proj name
         "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"       <-- unique-key to use for uploading versions.
     }
     </pre>
         <h5>Upload version to project</h5>
         <div>
             <ol>
-                <li>Generate Project documentation (you can choose anything)</li>
-                <li>Create a zip file of the version</li>
-                <li>Upload using CURL</li>
+                <li>
+                    Generate project documentation as html using your favorite tool (<b>the docs must have an index.html entrypoint file</b>)
+                </li>
+                <li>
+                    Zip the documentation in the format <i>projectname-version</i>.zip (<b>the index.html file must be on the root level of the zip file and the name and version needs to be correctly set in the filename</b>)
+                </li>
+                <br>
+                <pre>
+$ cd my_project/docs
+
+$ tree
+(.venv) ~/projects/my-project/docs$ tree -L 1
+    .
+    ├── filekeeper.html
+    ├── getconfig.html
+    └── index.html        <-- This file must be there on root level
+
+$ zip -r my-project-0.1.0.zip *
+                </pre>
+                <li>Upload the zip file</li>
+                <pre>
+$ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://10.249.1.12:8000/manage/upload
+                </pre>
+                <br />
             </ol>
         </div>
-        <b>1. create a zip file (Uses project name that was used for registration!)</b>
-        <br>
-        <pre>
-        # let's say you have generated docs in this directory.
-        $ cd my_project/docs
-
-        # see the structure
-        $ tree
-        (.venv) ~/projects/my_project/docs$ tree -L 1
-            .
-            ├── my_project
-            ├── config
-            ├── filekeeper.html
-            ├── getconfig.html
-            ├── index.html        <-- This file "must" be there on root level
-            ├── libs
-            ├── metadata.json
-            └── routes
-
-        # Lets zip the contents
-        $ zip -r my_project-0.1.0.zip *
-</pre>
-        <br />
-        <b>2. Upload the zip file</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='upload_zip.png') }}"
-             class="resize" />
-        <br />
-        <hr>
-        <br />
-        <b>3. Check the documentation</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='landing.png') }}" class="resize" />
-        <br />
-        <hr>
-        <br />
-        <b>4. Browse</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='browse.png') }}" class="resize" />
-        <br />
-        <hr>
-        <br />
-        <b>5. Search</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='search.png') }}" class="resize" />
-        <br />
-        <hr>
-        <br />
-        <b>6. Changelog</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='changelog.png') }}"
-             class="resize" />
-        <br />
-        <hr>
-        <br />
-        <b>7. Show</b>
-        <br />
-        <br />
-        <img src="{{ url_for('static', filename='guide-1.png') }}" class="resize" />
-        <br />
         {% if copyright %}
             <hr>
             <footer>

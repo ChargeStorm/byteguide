@@ -136,7 +136,7 @@ class Uploader:
 
                         else:
                             self.update_version_metadata(name, version)
-                            self.create_latest_symlink(name)
+                            # self.create_latest_symlink(name)
                             self.move_changelog_to_root(verdir, projdir)
                             status = Status.OK
 
@@ -170,22 +170,22 @@ class Uploader:
         MetaDataHandler(project).delete_version(version)
         return True, "Version deleted successfully!"
 
-    @staticmethod
-    def create_latest_symlink(name: str) -> None:
-        """
-        Create a symlink to the latest version of the project.
+    # @staticmethod
+    # def create_latest_symlink(name: str) -> None:
+    #     """
+    #     Create a symlink to the latest version of the project.
 
-        Args:
-            name (str): project name.
-        """
-        latest_ver = MetaDataHandler(name).get_latest_version()
-        proj_dir = config.docfiles_dir.joinpath(name)
-        latest_link = proj_dir.joinpath("latest")
+    #     Args:
+    #         name (str): project name.
+    #     """
+    #     latest_ver = MetaDataHandler(name).get_latest_version()
+    #     proj_dir = config.docfiles_dir.joinpath(name)
+    #     latest_link = proj_dir.joinpath("latest")
 
-        if latest_link.exists():
-            latest_link.unlink()
+    #     if latest_link.exists():
+    #         latest_link.unlink()
 
-        latest_link.symlink_to(proj_dir.joinpath(latest_ver))
+    #     latest_link.symlink_to(proj_dir.joinpath(latest_ver))
 
     @staticmethod
     def update_version_metadata(project: str, version: str) -> str:

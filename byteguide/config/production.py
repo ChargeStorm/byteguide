@@ -11,20 +11,19 @@ def get():
     """
     return {
         "docfiles_dir": Path("/mnt/docs-host-volume"), #! This path is a mounted file share from Azure Blob Storage
-        "docfiles_link_root": "/mnt/docs-host-volume",
         "copyright": "All rights reserved © CTEK Sweden AB 2016-2024",
         "title": "CTEK Docshost",
         # "welcome": "Hello there!, \n - From byte/guide!",
-        "intro_line1": "Welcome to CTEKs internal code documentation hosting site!",
+        "intro_line1": "Welcome to CTEKs internal documentation hosting site!",
         "intro_line2": (
             "<br>Follow the buttons in the upper right corner to browse available projects or learn how to upload your own project.<br><br>"
-            "Remember that this site is purely for hosting <b>internal</b> code documentation."
+            "Remember that this site is purely for hosting <b>internal</b> documentation."
         ),
         # "footer": "All rights reserved © CTEK Sweden AB 2016-2024",
         "host": "0.0.0.0",
         "port": 8000,
         "debug": True,
-        "readonly": True,
+        "readonly": False,
         "disable_delete": False,
         "max_content_mb": 10,
         # "enable_email_notification": False,

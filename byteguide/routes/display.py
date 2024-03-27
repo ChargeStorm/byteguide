@@ -1,7 +1,7 @@
 """ Display routes for byteguide. """
 from pathlib import Path
 
-from flask import Blueprint, render_template, jsonify, redirect, request
+from flask import Blueprint, render_template, jsonify, redirect, request, send_from_directory
 
 from byteguide.libs.fs import docs_dir_scanner
 from byteguide.config import config
@@ -42,7 +42,32 @@ def browse_proj_ver(project: str, version: str):
     info = docs_dir_scanner.get_proj_versions(project)
 
     if version in info["versions"]:
-        return redirect("/".join([config.docfiles_link_root, project, version, "index.html"]))
+        return send_from_directory(config.docfiles_dir / project / version, "index.html")
+
+    return jsonify({"error": f"Project {project} not found"}), 404
+
+@display_routes.route("/view/<project>/<version>", methods=["GET"])
+def view(project, version):
+    """
+    View the documentation for a specific project.
+
+    Args:
+        project (str): name of the project whose latest version is to be fetched.
+        version (str): version of the project to be fetched.
+
+    Example:
+        GET /browse/view/<project>/<version>
+
+    Returns:
+        Get the latest version of the project.
+    """
+    info = docs_dir_scanner.get_proj_versions(project)
+
+    if version in info["versions"]:
+        url = f"http://{request.host}/browse/{project}/{version}/"
+        return render_template(
+            "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version
+        )
 
     return jsonify({"error": f"Project {project} not found"}), 404
 
@@ -73,35 +98,6 @@ def search():
         error = f"no projects found matching {arguments}"
 
     return render_template("browse.html", projects=projects, config=config, error=error, show_search=True)
-
-
-@display_routes.route("/view/<project>/<version>", methods=["GET"])
-def view(project, version):
-    """
-    View the documentation for a specific project.
-
-    Args:
-        project (str): name of the project whose latest version is to be fetched.
-        version (str): version of the project to be fetched.
-
-    Example:
-        GET /browse/view/<project>/<version>
-
-    Returns:
-        Get the latest version of the project.
-    """
-    info = docs_dir_scanner.get_proj_versions(project)
-
-    # if specific_path:
-    #     url_parts = f"{config.docfiles_link_root}/{project}/{version,`` specific_path]
-
-    if version in info["versions"]:
-        url = "/".join([config.docfiles_link_root, project, version, "index.html"])
-        return render_template(
-            "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version
-        )
-
-    return jsonify({"error": f"Project {project} not found"}), 404
 
 
 @display_routes.route("/changelog/<project>", methods=["GET"])

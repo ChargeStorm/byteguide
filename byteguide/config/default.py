@@ -11,7 +11,6 @@ def get():
     """
     return {
         "docfiles_dir": Path("/home/nmhatre/byte_guide_docs"),
-        "docfiles_link_root": "/static/docfiles",
         "copyright": "",
         "title": "byteguide",
         "welcome": "Hello there!, \n - From byte/guide!",

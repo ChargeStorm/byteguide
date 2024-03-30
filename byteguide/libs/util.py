@@ -6,6 +6,7 @@ from pathlib import Path
 from loguru import logger as log
 
 from byteguide.libs.dtypes import ProjectEntry
+from byteguide.config import config
 
 
 def project_sort_key(project: ProjectEntry) -> str:
@@ -105,3 +106,18 @@ def validate_register_project(data: t.Dict) -> t.List[str]:
         errors.append("Project 'tags' must be a list!")
 
     return errors
+
+def get_docfiles_dir_config() -> Path:
+    """
+        Get the docfiles directory from the config.
+
+        This function is needed because the docfiles directory to use is changed based
+        on if the user specifies a custom directory outside the static folder or not.
+
+        It also handles converting the path to a Path object.
+    """
+
+    if config.docfiles_dir.startswith("byteguide/static"):
+        return Path(config.docfiles_dir)
+    else:
+        return Path("byteguide/static/docfiles")

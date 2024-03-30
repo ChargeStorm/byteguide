@@ -1,7 +1,7 @@
 """ Display routes for byteguide. """
 from pathlib import Path
 
-from flask import Blueprint, render_template, jsonify, redirect, request, send_from_directory
+from flask import Blueprint, render_template, jsonify, redirect, request, url_for
 from loguru import logger as log
 from byteguide.libs.fs import docs_dir_scanner, MetaDataHandler
 from byteguide.config import config
@@ -46,7 +46,8 @@ def browse_proj_ver(project: str, version: str):
         log.info(f"Latest version of {project} is {version}")
 
     if version in info["versions"]:
-        return send_from_directory(config.docfiles_dir / project / version, "index.html")
+        directory = "docfiles" + f"/{project}/{version}/index.html"
+        return redirect(url_for("static", filename=directory))
 
     return jsonify({"error": f"Project {project} not found"}), 404
 

@@ -17,13 +17,16 @@ from werkzeug.datastructures.file_storage import FileStorage
 
 from byteguide.config import config
 from byteguide.libs.dtypes import Status
-from byteguide.libs.util import ProjectEntry, Validators, get_directory_listing, project_sort_key
+from byteguide.libs.util import ProjectEntry, Validators, get_directory_listing, project_sort_key, get_docfiles_dir_config
 
 
 class Uploader:
     """
     Handles uploading to byteguide.
     """
+
+    def __init__(self):
+        self.docs_dir = get_docfiles_dir_config()
 
     @staticmethod
     def is_valid_zip_file(filename: t.Any) -> bool:
@@ -80,7 +83,7 @@ class Uploader:
 
         name, version = self._retrieve_name_and_version_from_zip(filename)
 
-        projdir = config.docfiles_dir.joinpath(name)
+        projdir = self.docs_dir / name
         verdir = projdir.joinpath(version)
 
         if not projdir.exists():
@@ -156,7 +159,7 @@ class Uploader:
         Returns:
             t.Tuple[bool, str]: True if the version was deleted successfully, False otherwise and a message.
         """
-        version_dir = config.docfiles_dir.joinpath(project, version)
+        version_dir = self.docs_dir / project / version
 
         if not version_dir.exists():
             return False, "Version not found!"
@@ -252,7 +255,7 @@ class MetaDataHandler:
             project (str): name of the project.
         """
         self.project = project
-        self.docs_dir = config.docfiles_dir
+        self.docs_dir = get_docfiles_dir_config()
         self.project_dir = self.docs_dir.joinpath(project)
         self.meta_file_name = "metadata.json"
         self.metadata = self.read_metadata()
@@ -380,7 +383,7 @@ class DocsDirScanner:
     """
 
     def __init__(self) -> None:
-        self.docs_dir = config.docfiles_dir
+        self.docs_dir = get_docfiles_dir_config()
 
     def projects_as_template_data(self, all_projects: t.List[ProjectEntry]) -> t.List[t.Dict[str, t.Any]]:
         """
@@ -419,9 +422,11 @@ class DocsDirScanner:
         Returns:
             t.Optional[t.Dict[str, t.Any] | None]: project metadata.
         """
-        proj_dir = self.docs_dir.joinpath(project)
+        proj_dir = self.docs_dir / project
 
-        if not proj_dir.is_dir():
+        log.info(f"Looking for metadata in {proj_dir}...")
+
+        if not proj_dir.exists() or proj_dir.is_symlink():
             return None
 
         return MetaDataHandler(project).metadata
@@ -436,16 +441,18 @@ class DocsDirScanner:
         Returns:
             t.Dict[str, t.Any]: project versions.
         """
-        docfiles_dir = config.docfiles_dir
-        proj_dir = docfiles_dir.joinpath(project)
+        proj_dir = self.docs_dir / project
 
-        if not docfiles_dir.is_dir():
+        if not proj_dir.is_dir():
             return {}
 
-        project_metadata = self.get_proj_metadata(proj_dir)
+        log.info(f"Getting versions for {project}")
 
-        log.info(project_metadata)
-        if "versions" in project_metadata:
+        project_metadata = self.get_proj_metadata(project)
+
+        log.info(f"Project metadata: {project_metadata}")
+
+        if project_metadata and "versions" in project_metadata:
             versions = natsort.natsorted(project_metadata["versions"], key=lambda x: x[0])
         else:
             versions = []
@@ -454,19 +461,14 @@ class DocsDirScanner:
 
         return project_metadata
 
-    def get_all_projects(self, docfiles_dir: t.Optional[Path] = None) -> t.Dict[str, t.List[str]]:
+    def get_all_projects(self) -> t.Dict[str, t.List[str]]:
         """
         Create the list of the projects.
 
         The list of projects is computed by walking the `docfiles_dir` and
         searching for project paths (<project-name>/<version>/index.html)
         """
-        docfiles_dir = docfiles_dir or config.docfiles_dir
-
-        if not docfiles_dir.is_dir():
-            return {}
-
-        all_projects: t.List[ProjectEntry] = get_directory_listing(path=docfiles_dir)
+        all_projects: t.List[ProjectEntry] = get_directory_listing(path=self.docs_dir)
 
         return self.projects_as_template_data(all_projects)
 
@@ -475,7 +477,6 @@ class DocsDirScanner:
         lang: t.Optional[str] = None,
         pattern: t.Optional[str] = None,
         tag: t.Optional[str] = None,
-        docfiles_dir: t.Optional[Path] = None,
     ) -> t.Dict[str, t.List[str]]:
         """
         Search for projects by filter.
@@ -489,12 +490,8 @@ class DocsDirScanner:
         Returns:
             t.Dict[str, t.List[str]]: list of projects matching the filter.
         """
-        docfiles_dir = docfiles_dir or config.docfiles_dir
 
-        if not docfiles_dir.is_dir():
-            return []
-
-        all_proj_dirs = get_directory_listing(path=docfiles_dir)
+        all_proj_dirs = get_directory_listing(path=self.docs_dir)
 
         filtered_result = self.apply_filter(all_proj_dirs, lang, pattern, tag)
 

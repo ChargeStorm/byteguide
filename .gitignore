@@ -51,3 +51,4 @@ dmypy.json
 docs/
 static/docfiles
 poetry.toml
+byteguide/static/docfiles

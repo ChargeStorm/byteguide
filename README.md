@@ -49,7 +49,7 @@ The following table lists the configuration properties available in `default.py`
 
 | Property Name | Description (Data Type, Example) |
 |---|---|
-| `docfiles_dir` | Path where document files will be saved. (pathlib.Path, Path("/home/nmhatre/byte_guide_docs")) |
+| `docfiles_dir` | Path where document files will be saved. (str, "/home/nmhatre/byte_guide_docs") |
 | `copyright` | The copyright message to display. (str, None) |
 | `title` | The title to display on the browser tab. (str, ByteGuide) |
 | `intro_line1` | Landing page intro line 1. Supports HTML code! (str, "Self host your code documentation easily!") |

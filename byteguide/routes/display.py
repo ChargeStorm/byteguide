@@ -70,7 +70,7 @@ def view(project, version):
         Get the latest version of the project.
     """
     info = docs_dir_scanner.get_proj_versions(project)
-    url = f"{request.scheme}://{request.host}/browse/{project}/{version}/"
+    url = url_for("browse.browse_proj_ver", project=project, version=version)
 
     return render_template(
         "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version

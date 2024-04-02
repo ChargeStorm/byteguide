@@ -39,15 +39,18 @@ def browse_proj_ver(project: str, version: str):
     Returns:
         Get the specified version of the project.
     """
+    log.info(f"Requested route: {project}/{version}")
     info = docs_dir_scanner.get_proj_versions(project)
-    log.info(f"Fetching {project} version {version}")
+    log.debug(f"Constructing {project} version {version} static path")
+
     if version == "latest":
         version = MetaDataHandler(project).get_latest_version()
         log.info(f"Latest version of {project} is {version}")
 
     if version in info["versions"]:
-        directory = "docfiles" + f"/{project}/{version}/index.html"
-        return redirect(url_for("static", filename=directory))
+        filename = f"docfiles/{project}/{version}/index.html"
+        log.info(f"Presenting static page: {filename}")
+        return redirect(url_for("static", filename=filename))
 
     return jsonify({"error": f"Project {project} not found"}), 404
 

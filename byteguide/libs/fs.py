@@ -272,7 +272,7 @@ class MetaDataHandler:
         """
         metadata_file = self._get_metadata_file()
 
-        log.info(f"reading {metadata_file}...")
+        log.debug(f"Reading {metadata_file}...")
 
         if metadata_file.exists():
             with open(metadata_file, "r", encoding="utf-8") as f:
@@ -424,7 +424,7 @@ class DocsDirScanner:
         """
         proj_dir = self.docs_dir / project
 
-        log.info(f"Looking for metadata in {proj_dir}...")
+        log.debug(f"Looking for metadata file in {proj_dir}...")
 
         if not proj_dir.exists() or proj_dir.is_symlink():
             return None
@@ -446,16 +446,18 @@ class DocsDirScanner:
         if not proj_dir.is_dir():
             return {}
 
-        log.info(f"Getting versions for {project}")
+        log.debug(f"Getting versions for {project}")
 
         project_metadata = self.get_proj_metadata(project)
 
-        log.info(f"Project metadata: {project_metadata}")
+        log.debug(f"Project metadata: {project_metadata}")
 
         if project_metadata and "versions" in project_metadata:
             versions = natsort.natsorted(project_metadata["versions"], key=lambda x: x[0])
         else:
             versions = []
+
+        log.debug(f"Identified versions: {versions}")
 
         project_metadata["versions"] = ["latest", *versions]
 

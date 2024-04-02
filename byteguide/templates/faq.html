@@ -66,15 +66,75 @@ $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-
                 <br />
             </ol>
         </div>
-        {% if copyright %}
-            <hr>
-            <footer>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p>{{ copyright|safe }}</p>
-                    </div>
-                </div>
-            </footer>
-        {% endif %}
+        <h3>Known Issues</h3>
+        <div>
+            <ol>
+                <li>
+                    <b>Subpages in MkDocs generated documentation does not work</b>
+                    <p>
+                        <br>
+                        <b>Reason:</b>
+                        The current setup of ByteGuide does not support <i>directory urls</i>,
+                        which is the default behavior of MkDocs.
+                        <br>
+                        <br>
+                        Directory urls mean that the subpages are accessed by the directory name
+                        and not the filename to get cleaner urls. The webserver then needs to assume
+                        that there exists a index.html file in that directory and serve that.
+                        <br>
+                        <br>
+                        <b>Workaround:</b>
+                        To turn of directory urls, add the following to the mkdocs.yml file:
+                        <pre>
+    use_directory_urls: false
+                        </pre>
+                    </p>
+                </li>
+                <li>
+                    <b>The url is always /browse/view/{project}/{version} when navigating subpages,
+                    making it difficult to share links</b>
+                </b>
+                <p>
+                    <br>
+                    <b>Reason:</b>
+                    ByteGuide shows a scroll bar of available versions when
+                    inside of a documentation version.
+                    <p>
+                        <img src="/static/version_scroll_list.png" alt="Version scroll bar">
+                    </p>
+                    This works by using html concept called <i>iframe</i> to embed the
+                    documentation which is actually located at <code>/browse/{project}/{version}</code>
+                    in the <code>/browse/view/{project}/{version}</code> page which has this top bar.
+                    Because of this the url is always <code>/browse/view/{project}/{version}</code> when
+                    navigating subpages with the "version top bar" available.
+                    <br>
+                    <br>
+                    <b>Workaround:</b>
+                    To get to the "real" documentation page you can actually click on
+                    your documentation name in the upper right corner of the page. This
+                    will take you to documentation page of the current version where
+                    the url is dynamically updated while navigating subpages.
+                    <p>
+                        <img src="/static/project_link.png" alt="Project link">
+                    </p>
+                    <br>
+                    <br>
+                    Directory urls mean that the subpages are accessed by the directory name
+                    and not the filename to get cleaner urls. The webserver then needs to assume
+                    that there exists a index.html file in that directory and serve that.
+                </p>
+            </li>
+        </ol>
     </div>
+    {% if copyright %}
+        <hr>
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>{{ copyright|safe }}</p>
+                </div>
+            </div>
+        </footer>
+    {% endif %}
+</div>
 {% endblock %}

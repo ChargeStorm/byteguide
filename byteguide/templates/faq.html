@@ -119,17 +119,60 @@ $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-
                     </p>
                 </p>
             </li>
-        </ol>
-    </div>
-    {% if copyright %}
-        <hr>
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>{{ copyright|safe }}</p>
-                </div>
+            <li>
+                <b>It's not possible to delete versions of projects through curl</b>
+            </b>
+            <p>
+                <br>
+                <b>Reason:</b>
+                This is not yet implemented.
+                <br>
+                <br>
+                <b>Workaround:</b>
+                To overwrite an existing version use that `reupload` flag described in the FAQ below. If you really need to have a version or project deleted, please contact the site admin.
+            </p>
+        </li>
+    </ol>
+</div>
+<h3>FAQ</h3>
+<div>
+    <ol>
+        <li>
+            <b>Can I upload a version which does not conform to SemVer?</b>
+            <p>
+                <br>
+                <b>Answer:</b>
+                It's absolutely fine to upload versions which do not conform to SemVer. One example of this would be
+                if you want to upload a version from your main/master/dev branch such as in the example below:
+                <pre>
+curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 http://127.0.0.1:8000/manage/upload
+                    </pre>
+                The only requirement is that the version number is unique and alphanumeric.
+            </p>
+        </li>
+        <li>
+            <b>Can I upload the same version multiple times?</b>
+            <p>
+                <br>
+                <b>Answer:</b>
+                For this you can use the `reupload` flag as in the following example:
+                <pre>
+curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 -F reupload=true http://127.0.0.1:8000/manage/upload
+                    </pre>
+                Again an example of this would be if you want to upload a version from your main/master/dev branch again and again.
+            </p>
+        </li>
+    </ol>
+</div>
+{% if copyright %}
+    <hr>
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>{{ copyright|safe }}</p>
             </div>
-        </footer>
-    {% endif %}
+        </div>
+    </footer>
+{% endif %}
 </div>
 {% endblock %}

@@ -160,34 +160,14 @@ class Uploader:
         MetaDataHandler(project).delete_version(version)
         return True, "Version deleted successfully!"
 
-    # @staticmethod
-    # def create_latest_symlink(name: str) -> None:
-    #     """
-    #     Create a symlink to the latest version of the project.
-
-    #     Args:
-    #         name (str): project name.
-    #     """
-    #     latest_ver = MetaDataHandler(name).get_latest_version()
-    #     proj_dir = config.docfiles_dir.joinpath(name)
-    #     latest_link = proj_dir.joinpath("latest")
-
-    #     if latest_link.exists():
-    #         latest_link.unlink()
-
-    #     latest_link.symlink_to(proj_dir.joinpath(latest_ver))
-
     @staticmethod
-    def update_version_metadata(project: str, version: str) -> str:
+    def update_version_metadata(project: str, version: str) -> None:
         """
         Update the metadata for the project.
 
         Args:
             project (str): project name.
             version (str): version to add.
-
-        Returns:
-            str: latest version of the project.
         """
         log.info(f"Updating metadata for project {project} version {version}")
 
@@ -197,8 +177,6 @@ class Uploader:
         log.info(f"Current metadata: {proj_metadata.metadata}")
 
         proj_metadata.add_version(version)
-
-        return proj_metadata.get_latest_version()
 
     def move_changelog_to_root(self, verdir: Path, projdir: Path) -> None:
         """
@@ -349,6 +327,26 @@ class MetaDataHandler:
             return ""
 
         return list(self.metadata["versions"])[0]
+
+    def get_latest_uploaded_version(self) -> str:
+        """
+        Get the version of the latest uploaded documentation to the project.
+
+        Returns:
+            str: version of the latest uploaded documentation.
+        """
+        latest_version = None
+        latest_date = None
+
+        for version, data in self.metadata["versions"].items():
+            upload_date = data.get("upload-date")
+            if upload_date:
+                if latest_date is None or upload_date > latest_date:
+                    latest_date = upload_date
+                    latest_version = version
+
+        return latest_version
+
 
     def save(self, metadata: t.Optional[t.Dict] = None) -> None:
         """

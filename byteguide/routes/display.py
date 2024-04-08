@@ -44,7 +44,7 @@ def browse_proj_ver(project: str, version: str):
     log.debug(f"Constructing {project} version {version} static path")
 
     if version == "latest":
-        version = MetaDataHandler(project).get_latest_version()
+        version = MetaDataHandler(project).get_latest_uploaded_version()
         log.info(f"Latest version of {project} is {version}")
 
     if version in info["versions"]:

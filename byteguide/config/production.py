@@ -25,7 +25,7 @@ def get():
         "debug": True,
         "readonly": False,
         "disable_delete": False,
-        "max_content_mb": 10,
+        "max_content_mb": 100,
         # "enable_email_notification": False,
         # "smpt_server": "",
         # "smpt_port": 587,

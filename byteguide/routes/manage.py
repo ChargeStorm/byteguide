@@ -1,6 +1,7 @@
 """ Manage routes for the byteguide. """
 from flask import Blueprint, jsonify, request
 from loguru import logger as log
+from pathlib import Path
 
 from byteguide.config import config
 from byteguide.libs import util
@@ -46,8 +47,10 @@ def register():
     if errors:
         return jsonify({"message": "failed to register project", "errors": errors}), 400
 
+    docfiles_dir = Path(config.docfiles_dir)
+
     proj_name = register_project["name"]
-    proj_path = config.docfiles_dir.joinpath(proj_name)
+    proj_path = docfiles_dir.joinpath(proj_name)
 
     result = {"message": "", "project": register_project["name"], "unique-key": ""}
 

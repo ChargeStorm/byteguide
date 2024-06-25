@@ -10,7 +10,7 @@ def get():
         The default configuration.
     """
     return {
-        "docfiles_dir": "/mnt/docs-host-volume", #! This path is a mounted file share from Azure Blob Storage
+        "docfiles_dir": "/mnt/docshost-volume", #! This path is a mounted file share from Azure Blob Storage
         "copyright": "All rights reserved © CTEK Sweden AB 2016-2024",
         "title": "CTEK Docshost",
         # "welcome": "Hello there!, \n - From byte/guide!",

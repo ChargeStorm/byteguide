@@ -1,5 +1,4 @@
 """Default configuration for byteguide."""
-from pathlib import Path
 
 
 def get():
@@ -10,13 +9,14 @@ def get():
         The default configuration.
     """
     return {
-        "docfiles_dir": "/mnt/docshost-volume", #! This path is a mounted file share from Azure Blob Storage
+        "docfiles_dir": "/mnt/docshost-volume",  #! This path is a mounted file share from Azure Blob Storage
         "copyright": "All rights reserved © CTEK Sweden AB 2016-2024",
         "title": "CTEK Docshost",
         # "welcome": "Hello there!, \n - From byte/guide!",
         "intro_line1": "Welcome to CTEKs internal documentation hosting site!",
         "intro_line2": (
-            "<br>Follow the buttons in the upper right corner to browse available projects or learn how to upload your own project.<br><br>"
+            "<br>Follow the buttons in the upper right corner to browse available projects or learn how to upload your \
+            own project.<br><br>"
             "Remember that this site is purely for hosting <b>internal</b> documentation."
         ),
         # "footer": "All rights reserved © CTEK Sweden AB 2016-2024",

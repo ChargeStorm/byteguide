@@ -1,7 +1,9 @@
-""" Manage routes for the byteguide. """
+"""Manage routes for the byteguide."""
+
+from pathlib import Path
+
 from flask import Blueprint, jsonify, request
 from loguru import logger as log
-from pathlib import Path
 
 from byteguide.config import config
 from byteguide.libs import util
@@ -115,7 +117,7 @@ def upload():
     try:
         uploaded_file = util.file_from_request(request)
         status = uploader.upload(uploaded_file, uniq_key=unique_key, reupload=reupload)
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         log.error(e)
         response = {"status": "failed", "message": str(e)}
     else:
@@ -128,5 +130,37 @@ def upload():
 def delete():
     """
     Delete a specific version of a package. Deletion details are sent as a JSON doc.
-    Admin will be notified on version deletion.
+
+    Note:
+    1. 'Project' must be registered first!
+
+    Example:
+    ```bash
+    $ curl -X POST \
+        -F project=project \
+        -F version=version \
+        http://127.0.0.1:5000/manage/delete
+    ```
+
+    Returns:
+        A JSON doc with the following keys:
+        - `status`: status of the deletion
+        - `message`: message indicating success or failure of the delete
     """
+    log.info(f"Got delete request from {request.remote_addr}")
+    log.info(f"Request files: {request.files}")
+    log.info(f"Request args: {request.args}")
+    log.info(f"Request form: {request.form}")
+
+    project = request.form.get("project", None)
+    version = request.form.get("version", None)
+
+    try:
+        status, message = uploader.delete(project, version)
+    except Exception as e:  # pylint: disable=broad-except
+        log.error(e)
+        response = {"status": "failed", "message": str(e)}
+    else:
+        response = {"status": "success" if status else "failed", "message": message}
+
+    return jsonify(response)

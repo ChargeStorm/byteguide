@@ -1,5 +1,4 @@
 """Default configuration for byteguide."""
-from pathlib import Path
 
 
 def get():
@@ -10,7 +9,7 @@ def get():
         The default configuration.
     """
     return {
-        "docfiles_dir": "/home/nmhatre/byte_guide_docs",
+        "docfiles_dir": "home/nmhatre/byte_guide_docs",
         "copyright": "",
         "title": "byteguide",
         "welcome": "Hello there!, \n - From byte/guide!",

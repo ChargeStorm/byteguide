@@ -5,8 +5,8 @@ from pathlib import Path
 
 from loguru import logger as log
 
-from byteguide.libs.dtypes import ProjectEntry
 from byteguide.config import config
+from byteguide.libs.dtypes import ProjectEntry
 
 
 def project_sort_key(project: ProjectEntry) -> str:
@@ -43,26 +43,27 @@ def file_from_request(request) -> str:
 
 
 class Validators:
-    """ Provides methods for validating input. """
+    """Provides methods for validating input."""
+
     @staticmethod
     def is_valid_version(version: str) -> bool:
-        """ Check if a version string is valid. """
+        """Check if a version string is valid."""
         return Validators.is_alphanumeric(version, [".", "-"])
 
     @staticmethod
     def is_valid_name(name: str) -> bool:
-        """ Check if a name is valid. """
+        """Check if a name is valid."""
         return Validators.is_alphanumeric(name, ["-", "_"])
 
     @staticmethod
     def is_alphanumeric(val: str, additional: t.List[str]) -> bool:
-        """ Check if a string is alphanumeric. """
-        regex = re.compile(fr"^[a-zA-Z0-9{''.join(additional)}]+$")
+        """Check if a string is alphanumeric."""
+        regex = re.compile(rf"^[a-zA-Z0-9{''.join(additional)}]+$")
         return regex.match(val) is not None
 
 
 def get_directory_listing(path: t.Union[str, Path]) -> t.List[ProjectEntry]:
-    """ Get the listing of a directory. """
+    """Get the listing of a directory."""
     result = []
 
     if isinstance(path, str):
@@ -107,17 +108,17 @@ def validate_register_project(data: t.Dict) -> t.List[str]:
 
     return errors
 
+
 def get_docfiles_dir_config() -> Path:
     """
-        Get the docfiles directory from the config.
+    Get the docfiles directory from the config.
 
-        This function is needed because the docfiles directory to use is changed based
-        on if the user specifies a custom directory outside the static folder or not.
+    This function is needed because the docfiles directory to use is changed based
+    on if the user specifies a custom directory outside the static folder or not.
 
-        It also handles converting the path to a Path object.
+    It also handles converting the path to a Path object.
     """
 
     if config.docfiles_dir.startswith("byteguide/static"):
         return Path(config.docfiles_dir)
-    else:
-        return Path("byteguide/static/docfiles")
+    return Path("byteguide/static/docfiles")

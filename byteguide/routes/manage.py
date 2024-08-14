@@ -1,16 +1,15 @@
 """Manage routes for the byteguide."""
 
+from pathlib import Path
+
 from flask import Blueprint, jsonify, request
 from loguru import logger as log
-from pathlib import Path
 
 from byteguide.config import config
 from byteguide.libs import util
 from byteguide.libs.fs import DocsDirScanner, MetaDataHandler, Uploader
 
-manage_routes = Blueprint(
-    "manage", __name__, template_folder="templates", url_prefix="/manage"
-)
+manage_routes = Blueprint("manage", __name__, template_folder="templates", url_prefix="/manage")
 
 uploader = Uploader()
 
@@ -99,14 +98,10 @@ def upload():
         - `message`: message indicating success or failure of the upload
     """
     if config.readonly:
-        return jsonify(
-            {"status": "failed", "message": "Readonly mode is enabled."}
-        ), 403
+        return jsonify({"status": "failed", "message": "Readonly mode is enabled."}), 403
 
     if not request.files:
-        return jsonify(
-            {"status": "failed", "message": "Request is missing a zip file."}
-        ), 400
+        return jsonify({"status": "failed", "message": "Request is missing a zip file."}), 400
 
     log.info(f"Got upload request from {request.remote_addr}")
     log.info(f"Request files: {request.files}")
@@ -162,7 +157,7 @@ def delete():
 
     try:
         status, message = uploader.delete(project, version)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         log.error(e)
         response = {"status": "failed", "message": str(e)}
     else:

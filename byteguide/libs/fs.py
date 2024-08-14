@@ -1,10 +1,10 @@
-""" Filesystem related utilities. """
+"""Filesystem related utilities."""
+
 import datetime as dt
 import json
+import os
 import re
 import shutil
-import tempfile
-import os
 import typing as t
 import uuid
 import zipfile
@@ -15,9 +15,14 @@ import natsort
 from loguru import logger as log
 from werkzeug.datastructures.file_storage import FileStorage
 
-from byteguide.config import config
 from byteguide.libs.dtypes import Status
-from byteguide.libs.util import ProjectEntry, Validators, get_directory_listing, project_sort_key, get_docfiles_dir_config
+from byteguide.libs.util import (
+    ProjectEntry,
+    Validators,
+    get_directory_listing,
+    get_docfiles_dir_config,
+    project_sort_key,
+)
 
 
 class Uploader:
@@ -98,7 +103,9 @@ class Uploader:
         else:
             existing_metadata = MetaDataHandler(project=name).metadata
             if existing_metadata["unique-key"] != uniq_key:
-                log.warning(f"Invalid unique key for project {name}, got {uniq_key} expected {existing_metadata['unique-key']}")
+                log.warning(
+                    f"Invalid unique key for project {name}, got {uniq_key} expected {existing_metadata['unique-key']}"
+                )
                 status = Status.INVALID_UNIQUE_KEY
 
             elif verdir.exists() and not reupload:
@@ -110,7 +117,7 @@ class Uploader:
                     log.debug(f"Reuploading version {version} for project {name}, removing existing version")
                     shutil.rmtree(verdir)
 
-                verdir.mkdir() # Create version directory
+                verdir.mkdir()  # Create version directory
 
                 # This is insecure, we are only accepting things from trusted sources.
                 with zipfile.ZipFile(filename) as compressed_file:
@@ -121,7 +128,7 @@ class Uploader:
 
                         except Exception as e:  # pylint: disable=broad-except
                             # Clean up the temp directory and version directory if something goes wrong
-                            os.rmdir(verdir) # Clean up if something goes wrong
+                            os.rmdir(verdir)  # Clean up if something goes wrong
                             log.error(e)
                             status = Status.ERROR
 
@@ -347,7 +354,6 @@ class MetaDataHandler:
 
         return latest_version
 
-
     def save(self, metadata: t.Optional[t.Dict] = None) -> None:
         """
         Save the project metadata.
@@ -511,7 +517,7 @@ class DocsDirScanner:
             try:
                 pattern = re.compile(pattern)
                 final_projects = [proj for proj in final_projects if pattern.match(proj.metadata["name"])]
-            except Exception as e: # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 log.exception(e)
                 final_projects = []
 

@@ -9,7 +9,7 @@ def get():
         The default configuration.
     """
     return {
-        "docfiles_dir": "/home/rhagelin.creatorctek.local/git/byteguild_github/docfiles_dir",
+        "docfiles_dir": "home/nmhatre/byte_guide_docs",
         "copyright": "",
         "title": "byteguide",
         "welcome": "Hello there!, \n - From byte/guide!",

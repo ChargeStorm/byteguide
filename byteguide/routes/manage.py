@@ -161,11 +161,11 @@ def delete():
     version = request.form.get("version", None)
 
     try:
-        status = uploader.delete(project, version)
+        status, message = uploader.delete(project, version)
     except Exception as e:
         log.error(e)
         response = {"status": "failed", "message": str(e)}
     else:
-        response = {"status": status.value, "message": ""}
+        response = {"status": "success" if status else "failed", "message": message}
 
     return jsonify(response)

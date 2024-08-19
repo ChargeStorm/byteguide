@@ -15,26 +15,26 @@
         </div>
         <br>
         <pre>
-    $ cat register.json
-    {
-        "name": "my-project",
-        "description": "This is a sample project",
-        "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
-        "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
-        "programming-lang": "Python",             <-- metadata: Major prog language
-        "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
-    }
+          $ cat register.json
+          {
+              "name": "my-project",
+              "description": "This is a sample project",
+              "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
+              "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
+              "programming-lang": "Python",             <-- metadata: Major prog language
+              "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
+          }
 
 
-    $ curl -X POST -d @register.json -H 'Content-Type: application/json' http://10.249.1.12:8000/manage/register
+          $ curl -X POST -d @register.json -H 'Content-Type: application/json' http://10.249.1.12:8000/manage/register
 
-    # This returns a JSON response
-   {
-        "message": "project ['my-project'] already registered!",  <-- response text
-        "project": "my-project",                                  <-- registered proj name
-        "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"       <-- unique-key to use for uploading versions.
-    }
-    </pre>
+          # This returns a JSON response
+        {
+              "message": "project ['my-project'] already registered!",  <-- response text
+              "project": "my-project",                                  <-- registered proj name
+              "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"       <-- unique-key to use for uploading versions.
+          }
+        </pre>
         <h5>Upload version to project</h5>
         <div>
             <ol>
@@ -46,23 +46,39 @@
                 </li>
                 <br>
                 <pre>
-$ cd my_project/docs
+                  $ cd my_project/docs
 
-$ tree
-(.venv) ~/projects/my-project/docs$ tree -L 1
-    .
-    ├── filekeeper.html
-    ├── getconfig.html
-    └── index.html        <-- This file must be there on root level
+                  $ tree
+                  (.venv) ~/projects/my-project/docs$ tree -L 1
+                      .
+                      ├── filekeeper.html
+                      ├── getconfig.html
+                      └── index.html        <-- This file must be there on root level
 
-$ zip -r my-project-0.1.0.zip *
+                  $ zip -r my-project-0.1.0.zip *
                 </pre>
                 <li>Upload the zip file</li>
                 <pre>
-$ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://10.249.1.12:8000/manage/upload
+                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://10.249.1.12:8000/manage/upload
                 </pre>
                 <br />
             </ol>
+        </div>
+
+        <h3>Delete version</h3>
+        <div>
+            <ol>
+          <li>
+            Get the version id and project name.
+          </li>
+          <li>
+            <b>Use the following curl command to delete the version</b>
+          </li>
+            <br>
+            <pre>
+            $ curl -X POST -F project=project -F version=version http://127.0.0.1:5000/manage/delete
+            </pre>
+          </ol>
         </div>
         <h3>Known Issues</h3>
         <div>
@@ -118,7 +134,7 @@ $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-
                 </p>
             </li>
             <li>
-                <b>It's not possible to delete versions or whole projects through curl</b>
+                <b>It's not possible to delete whole projects through curl</b>
             </b>
             <p>
                 <br>
@@ -127,9 +143,9 @@ $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-
                 <br>
                 <br>
                 <b>Workaround:</b>
-                To overwrite an existing version use that `reupload` flag described in the FAQ below.
-                If you really need to have a version or project deleted, please contact the site admin which have
-                access to the hosting server.
+                If you really need to delete a whole project, please contact the site admin which have access to the hosting server.
+                <br>
+                Note: Version deletion is possible through curl.
             </p>
         </li>
     </ol>

@@ -1,3 +1,5 @@
+"""Health routes for the byteguide."""
+
 from flask import Blueprint, jsonify
 
 health_routes = Blueprint("health", __name__, template_folder="templates")

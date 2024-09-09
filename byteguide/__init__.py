@@ -47,10 +47,14 @@ def create_symlink():
     # a symlink to the static folder for simplicity of serving files
     if not config.docfiles_dir.startswith("byteguide/static"):
         try:
-            log.info(f"Creating symlink from {docfiles_dir} to byteguide/static/docfiles")
+            log.info(
+                f"Creating symlink from {docfiles_dir} to byteguide/static/docfiles"
+            )
             # Create symlink if it does not already exist
             if not os.path.exists("byteguide/static/docfiles"):
-                os.symlink(docfiles_dir, "byteguide/static/docfiles", target_is_directory=True)
+                os.symlink(
+                    docfiles_dir, "byteguide/static/docfiles", target_is_directory=True
+                )
         except OSError as e:
             # Handle symlink creation failure
             log.error(f"Symlink creation failed: {e}")

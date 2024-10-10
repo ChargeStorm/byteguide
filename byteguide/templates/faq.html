@@ -26,7 +26,7 @@
           }
 
           $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-          $ curl -X POST -d @register.json -H 'Content-Type: application/json' http://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $ACCESS_TOKEN"
+          $ curl -X POST -d @register.json -H 'Content-Type: application/json' https://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $ACCESS_TOKEN"
 
           # This returns a JSON response
           {
@@ -60,7 +60,7 @@
                 <li>Upload the zip file</li>
                 <pre>
                   $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
+                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 https://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 <br />
             </ol>
@@ -78,7 +78,7 @@
             <br>
             <pre>
             $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-            $ curl -X POST -F project=project -F version=version http://docshost.dev.ctek.com/manage/delete -H "Authorization: Bearer $ACCESS_TOKEN"
+            $ curl -X POST -F project=project -F version=version https://docshost.dev.ctek.com/manage/delete -H "Authorization: Bearer $ACCESS_TOKEN"
             </pre>
           </ol>
         </div>
@@ -164,7 +164,7 @@
                 if you want to upload a version from your main/master/dev branch such as in the example below:
                 <pre>
                   ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
+                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 https://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 The only requirement is that the version number is unique to your project and alphanumeric.
             </p>
@@ -177,7 +177,7 @@
                 For this you can use the `reupload` flag as in the following example:
                 <pre>
                   ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 -F reupload=true http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
+                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 -F reupload=true https://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 Again an example of this would be if you want to upload a version from your main/master/dev branch again and again.
             </p>
@@ -206,7 +206,7 @@
                 </pre>
                 so the final curl command should something like this:
                 <pre>
-                  curl -X POST -d @register.json -H 'Content-Type: application/json' http://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $(ACCESS_TOKEN)"
+                  curl -X POST -d @register.json -H 'Content-Type: application/json' https://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $(ACCESS_TOKEN)"
                 </pre>
             </p>
         </li>

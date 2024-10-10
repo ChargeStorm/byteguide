@@ -25,7 +25,8 @@
               "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
           }
 
-          $ curl -X POST -d @register.json -H 'Content-Type: application/json' http://10.249.1.12:8000/manage/register -H "Authorization: Bearer $(az account get-access-token --query accessToken -o tsv)"
+          $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
+          $ curl -X POST -d @register.json -H 'Content-Type: application/json' http://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $ACCESS_TOKEN"
 
           # This returns a JSON response
           {
@@ -58,7 +59,8 @@
                 </pre>
                 <li>Upload the zip file</li>
                 <pre>
-                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://10.249.1.12:8000/manage/upload -H "Authorization: Bearer $(az account get-access-token --query accessToken -o tsv)"
+                  $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
+                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 <br />
             </ol>
@@ -75,7 +77,8 @@
           </li>
             <br>
             <pre>
-            $ curl -X POST -F project=project -F version=version http://127.0.0.1:5000/manage/delete -H "Authorization: Bearer $(az account get-access-token --query accessToken -o tsv)"
+            $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
+            $ curl -X POST -F project=project -F version=version http://docshost.dev.ctek.com/manage/delete -H "Authorization: Bearer $ACCESS_TOKEN"
             </pre>
           </ol>
         </div>
@@ -160,7 +163,8 @@
                 It's absolutely fine to upload versions which do not conform to SemVer. One example of this would be
                 if you want to upload a version from your main/master/dev branch such as in the example below:
                 <pre>
-                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 http://127.0.0.1:8000/manage/upload -H "Authorization: Bearer $(az account get-access-token --query accessToken -o tsv)"
+                  ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
+                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 The only requirement is that the version number is unique to your project and alphanumeric.
             </p>
@@ -172,7 +176,8 @@
                 <b>Answer:</b>
                 For this you can use the `reupload` flag as in the following example:
                 <pre>
-                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 -F reupload=true http://127.0.0.1:8000/manage/upload -H "Authorization: Bearer $(az account get-access-token --query accessToken -o tsv)"
+                  ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
+                  curl -X POST -F file=@tests/static/test_docs/Sample-Proj-main.zip -F unique-key=743b92dc-ee45-4671-966a-0e8fa5def464 -F reupload=true http://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
                 </pre>
                 Again an example of this would be if you want to upload a version from your main/master/dev branch again and again.
             </p>
@@ -193,7 +198,7 @@
                 We have a zero trust policy, which means that you need to be authenticated to upload documentation.
                 You can authenticate via a access token, which you can easily get with the following command:
                 <pre>
-                  ACCESS_TOKEN=$(az account get-access-token --query accessToken -o tsv)"
+                  ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
                 </pre>
                 use this accessToken in the curl command by adding the following header:
                 <pre>
@@ -201,7 +206,7 @@
                 </pre>
                 so the final curl command should something like this:
                 <pre>
-                  curl -X POST -d @register.json -H 'Content-Type: application/json' http://10.249.1.12:8000/manage/register -H "Authorization: Bearer $(ACCESS_TOKEN)"
+                  curl -X POST -d @register.json -H 'Content-Type: application/json' http://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $(ACCESS_TOKEN)"
                 </pre>
             </p>
         </li>

@@ -17,22 +17,35 @@
         <pre>
           $ cat register.json
           {
-              "name": "my-project",
-              "description": "This is a sample project",
-              "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
-              "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
-              "programming-lang": "Python",             <-- metadata: Major prog language
-              "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
+            "name": "my-project",
+            "description": "This is a sample project",
+            "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
+            "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
+            "programming-lang": "Python",             <-- metadata: Major prog language
+            "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
           }
 
           $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-          $ curl -X POST -d @register.json -H 'Content-Type: application/json' https://docshost.dev.ctek.com/manage/register -H "Authorization: Bearer $ACCESS_TOKEN"
+          $ curl -X POST -d @register.json -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/register
 
-          # This returns a JSON response
+          # This returns the following JSON response on success
           {
-              "message": "project ['my-project'] already registered!",  <-- response text
-              "project": "my-project",                                  <-- registered proj name
-              "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"       <-- unique-key to use for uploading versions.
+            "message":"project registered successfully!",
+            "project":"Test",
+            "unique-key":"934763db-7e8e-46d4-945d-0c7c249b0ab7"
+          }
+
+          # Or if the project is already registered
+          {
+            "message": "project ['my-project'] already registered!",
+            "project": "my-project",
+            "unique-key": "b5eb5695-f10e-4f04-9a10-bd33a1b084c7"
+          }
+
+          # Or if there is an error
+          {
+            "errors":["Project 'description' is required!"],
+            "message":"failed to register project"
           }
         </pre>
         <h5>Upload version to project</h5>
@@ -60,7 +73,7 @@
                 <li>Upload the zip file</li>
                 <pre>
                   $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7 https://docshost.dev.ctek.com/manage/upload -H "Authorization: Bearer $ACCESS_TOKEN"
+                  $ curl -X POST -F "file=@my-project-0.1.0.zip" -F "unique-key=b5eb5695-f10e-4f04-9a10-bd33a1b084c7" -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/upload
                 </pre>
                 <br />
             </ol>
@@ -78,7 +91,7 @@
             <br>
             <pre>
             $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-            $ curl -X POST -F project=project -F version=version https://docshost.dev.ctek.com/manage/delete -H "Authorization: Bearer $ACCESS_TOKEN"
+            $ curl -X POST -F project=your-project -F version=your-version -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/delete
             </pre>
           </ol>
         </div>

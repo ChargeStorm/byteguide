@@ -1,8 +1,0 @@
-{
-    "name": "CSOS",
-    "description": "This project is for all documentation related to CSOS running in CTEKs EVSE product",
-    "owner": "Patrik Huss",                  
-    "owner-email": "some.thing@other.com",    
-    "programming-lang": "Bitbake",            
-    "tags": ["linux", "bitbake", "evse"]   
-}

@@ -1,0 +1,52 @@
+\pagebreak
+\section{OCPP standard error codes}
+
+\begin{description}
+
+\item[ConnectorLockFailure] Failure to lock or unlock connector.\\This can also be sent together with a non-error status.
+\item[GroundFailure] Ground fault circuit interrupter has been activated. In Chargestorm Connected~2, indicates an AC fault.
+\item[GroundFailure] Ground fault circuit interrupter has been activated.
+\item[HighTemperature] Temperature inside Charge Point is too high.\\This can also be sent together with a non-error status.
+\item[OverCurrentFailure] Over current protection device has tripped.
+\item[PowerSwitchFailure] Failure to control power switch.
+
+\end{description}
+
+\pagebreak
+\section{CTEK E-Mobility AB specific error codes}
+
+\begin{description}
+
+\item[CBC\_LOOP] The EV has bees seen switching between state B and state C too often.\\This can also be sent together with a non-error status.
+\item[EVOverCurrent] The EV has been drawing too much, the charging session is temporarily suspended.\\This can also be sent together with a non-error status.
+\item[ExcessiveContactorToggleCycles] Contactor has toggled excessively on/off during a short time period.
+\item[FWUpdateRebootAwaitingEVDisconnect] Rebooting after firmware update is held up by atleast one connected EV.\\This can also be sent together with a non-error status.
+\item[FrequentPPChanges] PP signal has changed too many times during a short time period.\\This can also be sent together with a non-error status.
+\item[MCU\_NOT\_RESPONDING] Internal MCU is not responding.
+\item[MaxEnergyOnInvalidIdReached] The EV has used up the allowed energy, for an invalid IdToken.\\This can also be sent together with a non-error status.
+\item[NgClientConnectionRefused] Nanogrid server refused connection.\\This can also be sent together with a non-error status.
+\item[NgClientIncorrectPSK] Password provided by NanoGridClientPresharedKey is invalid.\\This can also be sent together with a non-error status.
+\item[NgErrorClientLostConnection] Client has lost connection to GCU. This is set only on connector 1.\\This can also be sent together with a non-error status.
+\item[NgErrorConfiguration] There is an error in nanogrid configuration.
+\item[NgErrorOfflineEMS] Lost connection to energy management system.\\This can also be sent together with a non-error status.
+\item[NgHomeErrorOvercurrentShutdown] Suspended charging due to overcurrent in a home nanogrid.\\This can also be sent together with a non-error status.
+\item[NoPPDetected] The PP resistor can't be read / found.\\This can also be sent together with a non-error status.
+\item[OcuErrorEnergyMeter] OCU internal EM failure, found only in Chargestorm Connected~2.
+\item[OcuErrorFirmwareUpdate] Failure to update the OCU FW, found only in Chargestorm Connected~2.
+\item[OcuErrorGPIOExpander] Internal OCU error, found only in Chargestorm Connected~2.
+\item[OcuErrorGeneric] Generic OCU failure, found only in Chargestorm Connected~2.
+\item[OcuErrorModbusCommunication] Communication timeout error with OCU
+\item[OcuErrorNegativeCP] Negative side of the CP signal is detected.
+\item[OcuErrorRCMCalibration] Failure to calibrate the AC/DC sensor, found only in Chargestorm Connected~2.
+\item[OcuErrorRCMDC] DC error, found only in Chargestorm Connected~2.
+\item[OcuErrorRelayCount] The OCU relays has been switched many times, found only in Chargestorm Connected~2. Note: this error is deprecated and no longer used. Use OCPP GetConfiguration OutletFirstContactorCycleCount and OutletSecondContactorCycleCount to get the counters.\\This can also be sent together with a non-error status.
+\item[OcuErrorSelfTest] The OCU self-test failed, found only in Chargestorm Connected~2
+\item[OcuErrorTemperature1] Temperature alarm from sensor 1 in the OCU, found only in Chargestorm Connected~2.
+\item[OcuErrorTemperature2] Temperature alarm from sensor 2 in the OCU, found only in Chargestorm Connected~2.
+\item[SessionAuthenticationNotPossible] Not able to authenticate a new charging session\\This can also be sent together with a non-error status.
+\item[SessionEnergyReached] The EV has used up the allowed energy per charging session.\\This can also be sent together with a non-error status.
+\item[UNKNOWN\_ERROR] Unhandled custom error. Shouldn't be seen.
+\item[VentilationNotSupported] Ventilation was requested but it's not supported.\\This can also be sent together with a non-error status.
+\end{description}
+
+\end{document}

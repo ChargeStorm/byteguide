@@ -1,0 +1,804 @@
+\documentclass[10pt,a4paper,oneside,headings=big,headsepline]{scrreprt}
+
+% Sett margins
+%\headsep = 50pt
+
+% Watermark
+\usepackage{draftwatermark}
+\SetWatermarkText{Internal use only}
+\SetWatermarkFontSize{0.15\paperwidth}
+
+% Package to use
+\usepackage{fontspec}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[automark,markcase=upper]{scrlayer-scrpage}
+\usepackage[hidelinks]{hyperref}
+
+% Basic settings
+\author{CTEK E-Mobility AB}
+\title{CCU \nanogrid\ Configuration Manual}
+\subtitle{Pd\_CM\_004. Version A-4+A-5}
+
+\newcommand{\nanogrid}{NANOGRID\texttrademark}
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} \nameref*{#1}}}
+
+% Changing header
+\makeatletter
+\ihead{\@title\\\@subtitle}
+\chead{}
+\ohead{\includegraphics[width=0.2\textwidth]{img/CTEK-E-Mobility.png}}
+
+% Changing footer
+\ifoot{}
+\cfoot{}
+\ofoot{\thepage}
+\makeatother
+
+% Add headings and footer on chapter pages.
+\renewcommand{\chapterpagestyle}{scrheadings}
+
+\begin{document}
+\maketitle
+\chapter*{Info}
+This document is no longer intended to be shared outside of CTEK E-Mobility
+AB.
+
+\tableofcontents
+
+
+\chapter{Introduction}
+
+This document describes how the load management configuration for a \nanogrid\
+master station or CGC is done.
+
+For general information on how to configure the charging station or the CGC
+via the web based interface and how to upload configuration files, see the
+``CCU Manual (English)''. Appropriate technical knowledge and certification
+for work with electrical installations and maintenance work is required to
+prevent danger to persons or property.
+
+\section{License}
+\label{sec:license}
+
+A valid license for \nanogrid\ is required on all charging stations, as well
+as on the \nanogrid\ controller itself.
+
+\section{General architecture}
+\label{sec:general-architecture}
+
+A \nanogrid\ site usually consists of
+\begin{itemize}
+\item A \nanogrid\ controller.
+\item One or more charging stations acting as a client to the \nanogrid\
+  controller.
+
+\end{itemize}
+
+
+\chapter{\nanogrid\ Configuration}
+
+\section{Introduction}
+
+\nanogrid\ is a load balancing solution for electrical vehicle (EV)
+charging. It will ensure that the available electrical capacity is not
+exceeded by the connected \nanogrid\ EVSE units.
+
+\nanogrid\ compliant EVSE units (e.g. CCU R1.95+) are required for a
+\nanogrid\ installation. Management of non-\nanogrid\ units in a \nanogrid\
+scenario is out of scope for this document.
+
+
+\section{Configuration}
+
+In order for \nanogrid\ to make correct decisions and actions the
+\nanogrid\ installation needs to be configured for \nanogrid.
+
+The most important configuration is the configuration of the \nanogrid\
+controller.
+
+The  \nanogrid\ controller unit comes in two variants:
+
+\begin{description}
+\item[Grid Controller Unit (GCU)] A unit that is dedicated to the task of load
+  balancing. Typically placed in a separate cabinet.
+\item[Master Controller Unit (Master)] A unit that is also acts as a charging
+  station. The exterior is typically the same as controlled charging stations.
+\end{description}
+
+The GCU offers more possible configurations of \nanogrid, as well as is able
+to manage more units. For example, the GCU can manage a site with
+non-\nanogrid\ units sharing the electrical capacity of the installation, by
+either measuring the external load(s) or by measuring the consumption of the
+whole site. For more advanced and optional configuration, please refer to
+section~\fullref{sec:advanc-conf}.
+
+
+Documentation contained herein is applicable to both scenarios.
+
+Before the configuration of a \nanogrid\ installation please ensure the
+following:
+
+\begin{itemize}
+\item \nanogrid\ compliant units are in use
+\item Units are equipped with appropriate licenses
+\item The local electrical grid conditions are known
+\item Electrical installation is finished and will not shortly change
+\item Units contain a valid LAN configuration (non-LAN configuration is out of
+  scope for this document)
+\item Appropriate firmware is in use. As of writing 3.11 or later is
+  recommended.
+\end{itemize}
+
+\section{GCU/Master configuration -- \texttt{nanogrid.ini}}
+
+The central piece of configuration in a \nanogrid\ installation is the
+\nanogrid\ configuration file placed on the \nanogrid\  controller.
+
+This file defines how the nodes are connected electrically as well as
+how they may be reached by the local controller unit.
+
+The configuration file is called \verb|nanogrid.ini| in this document and is
+in a INI-file format (for more information about the INI-file format see:
+\url{https://en.wikipedia.org/wiki/INI\_file}).
+
+Create (or edit an existing) \verb|nanogrid.ini| with a text editor that
+understands and respects UNIX-style line-endings. Windows Notepad is NOT
+acceptable. For an acceptable editor available for Windows see:
+https://notepad-plus-plus.org/ . Do NOT use symbols not covered by ASCII (e.g
+åäö).
+
+\subsection{Contents}
+
+The file contains two things:
+
+\begin{itemize}
+\item General \nanogrid\ configuration
+\item Node configuration
+\end{itemize}
+
+General configuration include but is not limited to configuration of the
+\nanogrid\ scheduler, see \fullref{sec:advanc-conf-scheduler}.
+
+In scope for this document is two of the most common node types:
+
+\begin{description}
+\item [Fuse] A distribution board. The node can not be controlled but imposes
+  a limit on the amount of available electrical capacity. (Name \verb|Fuse|
+  has historical reasons).
+\item[Station] A \nanogrid\ compliant charging station. The node can be directly
+  controlled by the \nanogrid\ controller.
+\end{description}
+
+\subsection{Distribution boards (Fuse) Format}
+
+A distribution board is described by one of the fuse types. The basic format
+of a fuse node is the following:
+
+\begin{verbatim}
+[GROUP-1]
+type=fuse
+rating=32
+parent=MAINPANEL
+\end{verbatim}
+
+Where
+
+\begin{description}
+\item [[GROUP-1]] is the identity of the fuse node. It has to be unique for
+  every node in the configuration file.
+
+\item [type=fuse] defines that this node is of the fuse type. The primary
+  types covered by this document are \verb|fuse| and \verb|station|. The
+  remaining types are covered in section~\ref{sec:feedback-from-non}
+  and~\ref{sec:meas-distr-board}.
+
+\item [rating=32] is the upper limit of the node that should not be
+  exceeded. This is typically the rating of the fuse (in this case 32
+  A). The fuse is assumed to have three phases, all connected up- and
+  downstream.
+
+\item [parent=MAINPANEL] defines to which distribution board this station or
+  distribution board is connected to (upstream). In this case a distribution
+  board with the identity \verb|MAINPANEL|. This means that the node is
+  electrically downstream from the node \verb|MAINPANEL|.
+\end{description}
+
+\emph{Note:} \verb|station| nodes may not be set as parents as they can only be
+end nodes.
+
+Every configuration file describes a tree graph of the electrical
+connections that are applicable for the local installation.
+
+This means that every node has a direct parent \emph{except} for one node
+which is the grid connection point. The grid connection point is \emph{defined
+  by having itself} as a parent in the configuration.
+
+Example:
+
+\begin{verbatim}
+[MAINPANEL]
+type=fuse
+rating=40
+parent=MAINPANEL
+\end{verbatim}
+
+
+\subsection{Station format}
+\label{sec:station-format}
+
+The basic format of a station node is the following:
+
+\begin{verbatim}
+[NG-STATION-1]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=RST
+\end{verbatim}
+
+Where
+
+\begin{description}
+\item [[NG-STATION-1]] is the identity of the station node. It has to be
+  unique for every node in the configuration file. It also has to correspond
+  with the chargeboxidentity parameter set on the charging station.
+
+\item [type=station] defines that this node is of the station type.
+
+\item [parent=MAINPANEL] defines the distribution board this station is
+  connected to, in this case a distribution board with the identity
+  \verb|MAINPANEL|. This means that the station is electrically downstream from
+  the node \verb|MAINPANEL|.
+
+  \emph{Note:} ``station'' nodes may not be set as parents.
+
+\item[outlet/size=2] defines that the station is equipped with two outlets.
+
+\item[outlet/1/fallback\_current=8] integer that states what current should be
+  assigned to an EV, in case the charging station loses contact with the
+  \nanogrid\ controller. Accepted values are 0 or $>= 6$. The value is in
+  Ampere. The fallback current is 8\,A in the example.
+
+
+\item[outlet/2/fallback\_current=8] integer that states what current should be
+  assigned to an EV, in case the charging station loses contact with the
+  \nanogrid\ controller. Accepted values are 0 or $>= 6$\. The value is in
+  Ampere.  The fallback current is 8\,A in the example.
+
+\item[PhaseRotation=RST] states how the charging station is connected to the
+  grid. A combination of R (L1), S (L2), and T (L3). In the example, the
+  station is connected L1, L2, and L3.
+\end{description}
+
+\emph{Note:} the \verb|outlet/x/fallback_current| parameter \emph{shall} be
+set for all EVSE's on the connected charging station.
+
+
+\subsubsection{Offline clients}
+\label{sec:offline-clients}
+
+In the event that a charging station loses contact with the \nanogrid\
+controller, it needs to have a specified behaviour. The \nanogrid\ controller
+also needs to know how the charging station and it's EVSE's are going to
+behave.
+
+The fallback configuration consists of one parameter,
+\verb|outlet/X/fallback_current| for a standard EVSE.\footnote{For more complex
+charging stations, see section~\ref{sec:fallb-conf}}. Set this paramater to 0
+if the EVSE shall not allow charging if it's charging station is
+offline. Otherwise, set it to the allowed current allocation, i.e.\ 6 if 6\,A
+should be assigned if the charging station goes offline\ldots
+
+\emph{Note:} As of writing it is up to the person configuring the system to
+ensure that the combined fallback currents do not assign too much in the event
+of a local controller failure.
+
+
+\subsubsection{Deprecated configuration keys}
+\label{sec:depr-conf-keys}
+
+The following keys are no longer being used and can thus be omitted:
+\begin{description}
+
+\item [endpoint=mqtt] defines the endpoint of the \nanogrid\ station. The
+  endpoint configuration in scope for this document is a mqtt endpoint. In
+  this case the node will be accessed via the local MQTT server.
+
+  \emph{Note:} The \verb|endpoint| is not necessary to set from CCU FW r3.6.
+
+\item [outlet/1/connections=1,0,0] defines the first outlet to be a one-phase
+  outlet that is electrically connected to L1.
+
+\item [outlet/2/connections=2,3,1] defines the second outlet to be a
+  three-phase outlet that has the phase-rotation L2, L3, L1.  Not used since
+  the CCU FW r3.11.
+\end{description}
+
+
+\subsection{Installation}
+
+The \verb|nanogrid.ini| must be placed on the local controller unit. And must
+ONLY be placed on the local controller unit. Failure to install the file on
+the local controller unit or failure to limit installation to the local
+controller unit will result in undesired behavior.
+
+The \verb|nanogrid.ini| file may be uploaded via the stations web
+interface. Select: ``CCU \nanogrid\ Configuration'' and choose the prepared file
+and click ``Upload \nanogrid\ configuration''.  It can also be installed on
+the station from a CSMS\footnote{Charging Station Management System -- the
+  backend system the Charging Station is connected to.}, by a custom
+\verb|DataTransfer.req|. Talk to CTEK E-Mobility AB for more information.
+
+\emph{Note:} If the \verb|nanogrid.ini| file is malformed the firmware will
+abort execution.
+
+\section{\nanogrid\ client configuration -- \texttt{chargemanager.ini}}
+
+\emph{Note:} \nanogrid\ node configuration has to take place on every node
+that is to be managed by the local controller. The configuration needs to take
+place even on a master controller.
+
+Regular configuration of \verb|chargemanager.ini| is out of scope for this
+document. It is assumed to have been completed correctly.
+
+From the web interface ensure that \emph{\nanogrid\ Load Balancing} is set to
+\emph{Full}. In the \verb|chargemanager.ini| file the configuration key is
+\verb|localcontroller| and shall be set to \verb|1|.
+
+
+\section{Verification}
+
+Once the local controller and all \nanogrid\ stations have been
+configured, it is time to verify the installation.
+
+Should a station fail to start a charge, faulty configuration or
+network issues may be suspected.
+
+Should the electrical grid have been incorrectly described this will
+either result in sub-optimal performance or a risk of tripping fuses.
+
+\section{Complete Example}
+
+Below is a complete example of a configuration file. The configuration
+starts with a 63 A main fuse with two 35 A sub-fuses. On each 35 A
+sub-fuse two 16 A single phase stations are connected.
+
+\begin{verbatim}
+[MAINPANEL]
+type=fuse
+rating=63
+parent=MAINPANEL
+
+[GROUP-1]
+type=fuse
+rating=35
+parent=MAINPANEL
+
+[GROUP-2]
+type=fuse
+rating=35
+parent=MAINPANEL
+
+[STATION1]
+type=station
+parent=GROUP-1
+outlet/size=2
+outlet/1/fallback_current=6
+outlet/2/fallback_current=0
+PhaseRotation=RTS
+
+[STATION2]
+type=station
+parent=GROUP-1
+outlet/size=2
+outlet/1/fallback_current=6
+outlet/2/fallback_current=0
+PhaseRotation=TSR
+
+[STATION3]
+type=station
+parent=GROUP-2
+outlet/size=2
+outlet/1/fallback_current=6
+outlet/2/fallback_current=0
+PhaseRotation=SRT
+
+[STATION4]
+type=station
+parent=GROUP-2
+outlet/size=2
+outlet/1/fallback_current=0
+outlet/2/fallback_current=0
+PhaseRotation=RTS
+\end{verbatim}
+
+\section{Advanced Configuration}
+\label{sec:advanc-conf}
+
+For some scenarios more advanced \nanogrid\ configuration is required.
+
+\subsection{Scheduler}
+\label{sec:advanc-conf-scheduler}
+
+The scheduler controls how scheduling will take place. As of writing
+three schedulers exist.
+
+\begin{description}
+\item[Equal] Attempts to maintain a ``fair'' distribution
+\item[Fifo] First in first out scheduling
+\item[SimpleFeedback] A feedback based scheduler, can be abreviated as
+  \verb|SFB| in \verb|nanogrid.ini|.
+\end{description}
+
+The first two schedulers are designed for open-loop \nanogrid\
+scenarios. If the site is equipped with working energy meters the
+\verb|SimpleFeedback| scheduler should be prefered.
+
+The scheduler is controlled by setting the \verb|scheduler| parameter at
+the top-level category \verb|[General]|.
+
+\subsubsection{Example}
+
+\begin{verbatim}
+[General]
+scheduler=SIMPLEFEEDBACK
+
+...
+\end{verbatim}
+
+\subsection{Phase-switching}
+
+If a station is phase-switching it has the capability to either
+provide three-phase current or a single phase which it can choose as
+appropriate.
+
+An outlet is configured as phase-switching by receiving that information from
+the charging station itself. Previously it was done as in the example below.
+
+\emph{Note:} As of writing not all schedulers support
+phase-switching. Only the FIFO scheduler and SIMPLEFEEDBACK scheduler are
+supported.
+
+The only configuration needed to be done for a phase-switching station in
+\verb|nanogrid.ini| is the extra fallback configuration described in
+section~\ref{sec:fallb-conf}.
+
+
+\subsubsection{Deprecated configuration}
+\label{sec:depr-conf-phase-switching}
+
+It is no longer necessary to state that the EVSE has phase-switching
+capabilities, as that will be reported by the charging station
+itself. However, in versions up to CCU FW r3.11, this was done by:
+\begin{description}
+\item[outlet/X/connections="switch"] stated that the EVSE had phase switching
+  capabilities.
+\end{description}
+where \verb|X| was 1 or 2.
+
+
+\subsection{Fallback configuration}
+\label{sec:fallb-conf}
+
+In the event that a managed node loses contact with a local controller it will
+not be able to charge any EV unless a fallback configuration has been
+specified.
+
+The fallback configuration consists of one or two parameters depending on the
+type of node.
+
+For non-phase switching nodes \emph{only} a fallback current, see
+section~\ref{sec:station-format}, is required while phase switching charging
+stations requires a fallback output as well.
+
+\emph{Note:} As of writing it is up to the person configuring the system to
+ensure that the combined fallback currents do not assign too much in the event
+of a local controller failure.
+
+
+\subsubsection{Fallback behaviour for phase switching EVES's}
+\label{sec:fallb-behav-phase}
+
+The fallback output tells a phase switching station on which output should be
+provided when offline. This \emph{only} makes sense for a phase switching
+station and will be disregarded for other charging stations. The value has the
+following possible values:
+
+\begin{description}
+\item[0] No output
+\item[1] Three phase output
+\item[2] Single phase L1
+\item[3] Single phase L2
+\item[4] Single phase L3
+\end{description}
+
+\subsubsection{Example}
+
+\begin{verbatim}
+...
+
+[STATIC-1]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=RTS
+
+[SWITCHING-A]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/1/fallback_output=2
+outlet/2/fallback_current=8
+outlet/2/fallback_output=3
+PhaseRotation=TRS
+
+...
+\end{verbatim}
+
+
+\subsection{Feedback from non-EVSE loads}
+\label{sec:feedback-from-non}
+
+If a node has an external load that is measured the scheduler can take
+it into consideration. For example assume that a fuse both have a
+charging station and large fan attached. Then if the load of the fan
+is measured, the scheduler can take it into account when controlling the
+charging station.
+
+\subsubsection{Example}
+
+\begin{verbatim}
+...
+
+[SHARED-BOARD]
+type=measuredfuse
+meter="modbus/1/1"
+rating=20
+parent=MAINPANEL
+
+[STATION-1]
+type=station
+parent=SHARED-BOARD
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=RTS
+
+...
+\end{verbatim}
+
+
+\subsection{Distribution board measuring the whole load}
+\label{sec:meas-distr-board}
+
+If a node has an energy meter attached that measures the load at that
+point, i.e the aggregated load of the sub nodes the scheduler may use
+that information to make its scheduling.
+
+This is in contrast to the measured fuse where only the external load
+is measured. In essence the aggregated fuse is the sum of non-EV loads
+and EV loads.
+
+\subsubsection{Example}
+
+\begin{verbatim}
+...
+
+[SHARED-BOARD]
+type=aggregatedfuse
+meter="modbus/1/1"
+rating=20
+parent=MAINPANEL
+
+[STATION-1]
+type=station
+parent=SHARED-BOARD
+outlet/size=2
+outlet/1/fallback_current=6
+outlet/2/fallback_current=6
+PhaseRotation=RTS
+
+...
+\end{verbatim}
+
+\subsection{EMS Configuration}
+
+If a node has an EMS (Energy Management System) attached that announces the
+available current  in the grid, the scheduler may use that information
+to make its scheduling. In this case, the available current through the
+distribution board will be set to the \emph{minimum} of the \verb|rating| and
+what the EMS reports as available.
+
+EMS devices can be configured on a distribution board, i.e.\ nodes of type:
+
+\begin{itemize}
+\item \verb|fuse|
+\item \verb|measuredfuse|
+\item \verb|aggregatedfuse|
+\end{itemize}
+
+An EMS is added with the configuration:
+\begin{verbatim}
+...
+
+[MAINPANEL]
+type=fuse
+rating=200
+parent=MAINPANEL
+ems=ehub:192.168.200.12
+emsfallback=100
+
+...
+\end{verbatim}
+
+Where
+
+\begin{description}
+\item [[MAINPANEL]] is the fuse node to add the EMS to.
+
+\item [ems=ehub:192.168.200.12] defines the endpoint of the EMS.
+It consists of the EMS \verb|<type>:<address>|. In the example the type is
+\verb|ehub| and the address is \verb|192.168.200.12|.
+
+\item [emsfallback=100] defines the fallback current in ampere
+to use if connection is lost with the EMS device.
+\end{description}
+
+\emph{Note:} Currently the only supported device is the
+Ferroamp EnergyHub, which is enabled by using the device type
+\verb|ehub|.
+
+\emph{Note:} The emsfallback configuration is a required parameter.
+
+\emph{Note:} The EMS is considered offline (fallback is used)
+if no successful communication with the device has occured during a 30
+second period.
+
+
+\subsection{IT-net}
+\label{sec:it-net}
+
+
+\subsubsection{Electrical connection}
+\label{sec:electr-conn}
+
+Stations used in IT-net shall be connected according to the following
+schematic, figure~\ref{fig:it-net-example}.
+
+\begin{figure}[htbp]
+  \includegraphics{nanogrid/figures/it-net_stations_rotation_schema.pdf}
+  \caption{Example schematics for IT-net.  Note that you need to verify where
+    the right EVSE (connector) physically takes it phase from, as this depends
+    on the charging station model.}
+  \label{fig:it-net-example}
+\end{figure}
+
+\subsubsection{Main fuse configuration}
+\label{sec:main-fuse-conf}
+
+NanoGrid does only support main fuses with the same rating. Configure NanoGrid
+with a main fuse setting equal to the fuse value divided by 1.732 (the square
+root of three) and round the value downwards. Example:
+
+\begin{quote}
+  For fuse rating 63A set the fuse configuration parameters to 63/1.732≈36A.
+\end{quote}
+
+
+\subsubsection{EVSE mapping}
+\label{sec:EVSE-mapping}
+
+Each station and EVSE must be configured to reflect how the incoming phases
+are connected and how the measured current values are mapped to those
+phases. Refer to figure~\ref{fig:it-net-example}. It is critical that all
+EVSE's follow a regular pattern. The mapping shall be as in
+table~\ref{tab:evse-phase-mappings}. Note, it's important to configure the
+phase and EVSE mappings correctly, according to the type of the charging
+station.
+
+\begin{table}[htbp]
+  \caption{EVSE and phase mappings.}
+  \label{tab:evse-phase-mappings}
+  \begin{tabular}{lrcr}
+    \toprule
+    Station number &  EVSE & Map current to & Electrical load \\
+    \midrule
+    1, 4, 7, \ldots & Left  & L1 & L1 to common L2 \\
+                    & Right & L3 & L3 to common L2 \\
+    \midrule
+    2, 5, 8, \ldots & Left  &  L2 & L2 to common L3 \\
+                    & Right &  L1 & L1 to common L3 \\
+    \midrule
+    3, 6, 9, \ldots & Left  &  L3 &  L3 to common L1 \\
+                    & Right &  L2 & L2 to common L1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Example configuration}
+\label{sec:example-conf}
+
+An example configuration, where there is a 63A fuse in the incoming
+distribution panel, called \verb|MAINPANEL|. However, according to the rule in
+section~\ref{sec:main-fuse-conf}, \verb|MAINPANEL| is configured with
+36A. ($63 / \sqrt{3} = 36$).
+
+Note the comment in the \verb|nanogrid.ini| file. Comments can be added by
+starting a line with e.g.\ a \verb|#| character.
+
+2\textsuperscript{nd} note: whether the two ``phases'' connected to each EVSE
+(EV connector), is connected to L1 \& L2 on the incoming terminal, or if they
+should be connected to L1 \& L3 depends on the type of the charging
+station. Check the manual.
+
+\begin{verbatim}
+[MAINPANEL]
+type=aggregatedfuse
+# The rating is the actual fuse 63A / sqrt(3) = 36A, this is done as this
+# is a IT-net.
+rating=36
+parent=MAINPANEL
+
+[CC2-1]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=RxT
+
+[CC2-2]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=SxR
+
+[CC2-3]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=TxS
+\end{verbatim}
+
+
+The example above assumes that the charging stations in question are of the
+type Chargestorm Connected 2. Had it been the previous version, Chargestorm
+Connected, the \verb|PhaseRotation| lines should have looked differently.
+
+Had \verb|CC2-1| been of type Chargestorm Connected, the configuration for
+that station should have looked like:
+\begin{verbatim}
+[CC2-1]
+type=station
+parent=MAINPANEL
+outlet/size=2
+outlet/1/fallback_current=8
+outlet/2/fallback_current=8
+PhaseRotation=RTx
+\end{verbatim}
+Note the last line \verb|PhaseRotation=RTx|. The station shall also be
+physically connected as \verb|L1, L3, L2|.
+
+\end{document}
+
+
+%%%% Local variables:
+%%%% mode: latex
+%%%% TeX-PDF-mode: t
+%%%% TeX-engine: xetex
+%%%% TeX-source-correlate-mode: t
+%%%% End:
+

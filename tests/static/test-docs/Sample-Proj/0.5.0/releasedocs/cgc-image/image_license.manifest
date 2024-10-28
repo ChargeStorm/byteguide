@@ -1,0 +1,20 @@
+RECIPE NAME: ccu-updater
+VERSION: 1.0
+LICENSE: CLOSED
+FILES: ctek-upgrade.sh
+
+RECIPE NAME: chargemanager
+VERSION: 1.0+gitAUTOINC+d3f8e196ca
+LICENSE: CLOSED
+FILES: cfg.json errorcodes.json
+
+RECIPE NAME: intel-microcode
+VERSION: 20210608
+LICENSE: Intel-Microcode-License
+FILES: microcode_20210608.cpio
+
+RECIPE NAME: linux-yocto-cgc500
+VERSION: 4.19+gitAUTOINC+568c288ded
+LICENSE: GPLv2
+FILES: modules--4.19+gitAUTOINC+568c288ded-r1.0-cgc500-20240102151619.tgz bzImage--4.19+gitAUTOINC+568c288ded-r1.0-cgc500-20240102151619.bin
+

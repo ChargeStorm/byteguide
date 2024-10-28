@@ -1,0 +1,65 @@
+\documentclass{scrartcl}
+\usepackage[margin=2.5cm
+  %,showframe% <- only to show the page layout
+]{geometry}
+
+\usepackage{fontspec}
+%\setmonofont{Arial}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,breaklines=true}
+\usepackage{graphicx}
+
+\usepackage{hyperref}
+\title{Image License Manifest}
+\subtitle{For CGC500 \input{current-oe-tag}}
+\author{CTEK E-Mobility AB}
+
+
+
+\usepackage[footsepline,,headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ohead{\includegraphics[width=0.2\textwidth]{img/CTEK-E-Mobility.png}}
+\chead{}
+\ihead{CCU Image License Manifest}
+
+%\renewcommand*\pagemark{{\usekomafont{pagenumber}Page\nobreakspace\thepage}}
+%\addtokomafont{pageheadfoot}{\upshape}
+\ofoot{\pagemark}
+\cfoot{}
+\ifoot{}
+
+\titlehead{\hfill\includegraphics[width=0.2\textwidth]{img/CTEK-E-Mobility.png}}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+This documents all the software packages that are included in the regular
+image for a CGC (CTEK Grid Central) from CTEK.
+
+Section~\ref{sec:lic-pack} lists everything that are part of the actual image.
+Sections~\ref{sec:licenses-non-image} lists software that are used outside of
+the actual image, for instance bootloaders.
+
+License \lstinline{CLOSED} denotes SW developed internally at CTEK.
+
+\section{Licenses \& packages in the CCU image}
+\label{sec:lic-pack}
+
+\lstinputlisting{cgc-image/license.manifest}
+
+\section{Licenses for non-image parts}
+\label{sec:licenses-non-image}
+
+\lstinputlisting{cgc-image/image_license.manifest}
+
+\end{document}
+
+%%%% Local variables:
+%%%% mode: latex
+%%%% TeX-PDF-mode: t
+%%%% TeX-engine: xetex
+%%%% End:

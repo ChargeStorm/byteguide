@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to the Fun Zone!</title>
+        <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #fun-message {
+      display: none;
+      text-align: center;
+      font-size: 2em;
+      color: #FF6347;
+      margin-top: 50px;
+    }
+        </style>
+    </head>
+    <body>
+        <h1>Get ready for some FUN!</h1>
+        <button onclick="showFunMessage()">Click me for a surprise!</button>
+        <p id="fun-message">Let's play a game! Click the button again to see a different fun fact.</p>
+        <script>
+  function showFunMessage() {
+    const messageElement = document.getElementById("fun-message");
+    const messages = [
+      "Did you know penguins can jump out of the water?",
+      "Sloths can sleep up to 20 hours a day!",
+      "Cats have over 30 different muscles in each ear!"
+    ];
+
+    let randomIndex = Math.floor(Math.random() * messages.length);
+    messageElement.textContent = messages[randomIndex];
+    messageElement.style.display = "block";
+  }
+        </script>
+    </body>
+</html>

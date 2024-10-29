@@ -1,6 +1,7 @@
 """Default configuration for byteguide."""
 from pathlib import Path
 
+
 def get():
     """
     Get the default configuration.

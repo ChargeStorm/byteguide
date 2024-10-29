@@ -53,7 +53,7 @@ class Validators:
     @staticmethod
     def is_valid_name(name: str) -> bool:
         """Check if a name is valid."""
-        return Validators.is_alphanumeric(name, ["-", "_"])
+        return Validators.is_alphanumeric(name, ["-", "_"]) and " " not in name
 
     @staticmethod
     def is_alphanumeric(val: str, additional: t.List[str]) -> bool:
@@ -93,6 +93,10 @@ def validate_register_project(data: t.Dict) -> t.List[str]:
 
     if not data.get("description"):
         errors.append("Project 'description' is required!")
+
+    # Check that name does not contain any special characters or whitespace
+    if not Validators.is_valid_name(data.get("name")):
+        errors.append("Project 'name' must be alphanumeric and cannot contain spaces!")
 
     if "tags" in data and not isinstance(data["tags"], list):  # optional
         errors.append("Project 'tags' must be a list!")

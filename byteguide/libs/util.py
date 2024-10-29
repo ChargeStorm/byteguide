@@ -96,7 +96,7 @@ def validate_register_project(data: t.Dict) -> t.List[str]:
 
     # Check that name does not contain any special characters or whitespace
     if not Validators.is_valid_name(data.get("name")):
-        errors.append("Project 'name' must be alphanumeric and cannot contain spaces!")
+        errors.append("Project 'name' must be alphanumeric seperated by dash or underscore and cannot contain whitespaces!")
 
     if "tags" in data and not isinstance(data["tags"], list):  # optional
         errors.append("Project 'tags' must be a list!")

@@ -54,6 +54,7 @@ def browse_proj_ver(project: str, version: str):
 
     return jsonify({"error": f"Project {project} not found"}), 404
 
+
 @display_routes.route("/view/<project>/<version>", methods=["GET"])
 def view(project, version):
     """
@@ -72,9 +73,7 @@ def view(project, version):
     info = docs_dir_scanner.get_proj_versions(project)
     url = url_for("browse.browse_proj_ver", project=project, version=version)
 
-    return render_template(
-        "view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version
-    )
+    return render_template("view_docs.html", doc_url=url, show_ver_dropdown=True, project_info=info, curr_ver=version)
 
 
 @display_routes.route("/search", methods=["GET"])

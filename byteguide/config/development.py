@@ -12,5 +12,5 @@ def get():
         "port": 29001,
         "debug": True,
         "readonly": False,
-	    "host": "0.0.0.0",
+        "host": "0.0.0.0",
     }

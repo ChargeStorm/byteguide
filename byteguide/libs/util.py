@@ -94,15 +94,6 @@ def validate_register_project(data: t.Dict) -> t.List[str]:
     if not data.get("description"):
         errors.append("Project 'description' is required!")
 
-    if not data.get("owner"):
-        errors.append("Project 'owner' is required!")
-
-    if not data.get("owner-email"):
-        errors.append("Project owner email is required!")
-
-    if not data.get("programming-lang"):
-        errors.append("Project programming language is required!")
-
     if "tags" in data and not isinstance(data["tags"], list):  # optional
         errors.append("Project 'tags' must be a list!")
 

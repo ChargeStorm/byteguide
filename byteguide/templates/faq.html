@@ -9,9 +9,45 @@
     <div class="container">
         <h3>How to upload documentation</h3>
         <hr />
-        <h5>First register the project / module / package</h5>
+        <h5>Register a project (easy way)</h5>
         <div>
-            First step is to register the project to get the key for uploading versions. Create a json file with the following content, name and description is mandatory.
+            To get started you first need to register your project. This registers the
+            name of the project and returns a unique key which you will use to upload your documentation.
+
+            To simplify the process there is a pipeline which only requires a couple of inputs and gets
+            the unique key for you.
+            <br>
+            <br>
+            <ol>
+                <li>Go to the following pipeline: <a href="https://dev.azure.com/CTEKSwedenAB/CTEK/_build?definitionId=204">create-docshost-project</a></li>
+                <li>Click on the "Run pipeline" button
+                    <p>
+                        <img src="/static/run-pipeline.png" alt="Project link">
+                    </p>
+                </li>
+                <li>Fill in the name and description of the project, and press "Run"
+                    <p>
+                        <img src="/static/fill-in-name.png" alt="Project link" style="width: 30%; height: auto;">
+                    </p>
+                </li>
+                <li>Wait for the pipeline to finish and turn green, then click on the "Extensions" tab
+                    <p>
+                        <img src="/static/project-docshost-done.png" alt="Project link" style="width: 120%; height: auto;">
+                    </p>
+                    Note: If there are any issues you can usually find the error message in the logs.
+                </li>
+                <li>Copy your unique key and use it to upload your documentation
+                    <p>
+                        <img src="/static/unique-key.png" alt="Project link">
+                    </p>
+                </li>
+            </ol>
+
+
+        <h5>Register a project (manual way)</h5>
+        <div>
+            You can also register a project manually using curl if you need to.
+            Create a json file with the following content, name and description is mandatory.
         </div>
         <br>
         <pre>
@@ -19,10 +55,10 @@
           {
             "name": "my-project",
             "description": "This is a sample project",
-            "owner": "Ninad Mhatre",                  <-- metadata: Proj owner name
-            "owner-email": "some.thing@other.com",    <-- metadata: Proj owner email
-            "programming-lang": "Python",             <-- metadata: Major prog language
-            "tags": ["python", "sample", "project"]   <-- metadata: Tags, for searching
+            "owner": "Ninad Mhatre",                  <-- optional metadata: Proj owner name
+            "owner-email": "some.thing@other.com",    <-- optional metadata: Proj owner email
+            "programming-lang": "Python",             <-- optional metadata: Major prog language
+            "tags": ["python", "sample", "project"]   <-- optional metadata: Tags, for searching
           }
 
           # Install Azure CLI to get access token, https://learn.microsoft.com/en-us/cli/azure/install-azure-cli

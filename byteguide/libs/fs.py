@@ -88,7 +88,7 @@ class Uploader:
             if version_dir.is_dir():
                 try:
                     shutil.rmtree(version_dir)
-                except Exception as e:
+                except Exception as e: # pylint: disable=broad-except
                     log.error(e)
                     return False, f"Unknown error when deleting version {version_dir}: {str(e)}"
 
@@ -166,7 +166,7 @@ class Uploader:
 
         return status
 
-    def delete(self, project: str, unique_key: str, version: t.Optional[str] = None) -> t.Tuple[bool, str]:
+    def delete(self, project: str, unique_key: str, version: t.Optional[str] = None) -> t.Tuple[bool, str]: # pylint: disable=too-many-return-statements
         """
         Delete a version from the project.
 
@@ -181,7 +181,7 @@ class Uploader:
         if not MetaDataHandler(project).get_unique_key() == unique_key:
             return False, "Invalid unique key!"
 
-        if MetaDataHandler(project).read_metadata=={}:
+        if MetaDataHandler(project).read_metadata() == {}:
             return False, f"Project with name {project} not found!"
 
         # If version is not provided, delete the project, check that all versions are deleted first though
@@ -197,13 +197,13 @@ class Uploader:
 
             try:
                 shutil.rmtree(self.docs_dir / project)
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-except
                 log.error(e)
                 return False, f"Unknown error when deleting project {project}: {str(e)}"
             return True, f"Project {project} deleted successfully!"
 
         # If version=all, delete all versions
-        elif version == "all":
+        if version == "all":
             log.debug(f"Deleting all versions for project {project}")
             return self._delete_all_versions(project)
 
@@ -363,7 +363,7 @@ class MetaDataHandler:
         Args:
             version (str): version to delete. If version is "all", the version key is removed.
         """
-        if version=="all":
+        if version == "all":
             del self.metadata["versions"]
         else:
             if version in self.metadata["versions"]:
@@ -371,7 +371,7 @@ class MetaDataHandler:
                 self.sort_versions()
 
                 # Remove the versions key if it is empty
-                if self.metadata["versions"]=={}:
+                if self.metadata["versions"] == {}:
                     del self.metadata["versions"]
 
         self.save()

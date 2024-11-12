@@ -72,6 +72,29 @@ class Uploader:
         name, version = name.rsplit("-", maxsplit=1)
         return name, version
 
+    def _delete_all_versions(self, project: str) -> t.Tuple[bool, str]:
+        """
+        Delete all versions of a project.
+
+        Args:
+            project (str): project name.
+
+        Returns:
+            t.Tuple[bool, str]: True if the versions were deleted successfully, False otherwise and a message.
+        """
+        project_dir = self.docs_dir / project
+
+        for version_dir in project_dir.iterdir():
+            if version_dir.is_dir():
+                try:
+                    shutil.rmtree(version_dir)
+                except Exception as e:
+                    log.error(e)
+                    return False, f"Unknown error when deleting version {version_dir}: {str(e)}"
+
+        MetaDataHandler(project).delete_version("all")
+        return True, "All versions deleted successfully!"
+
     def upload(self, filename: FileStorage, uniq_key: str, reupload: bool = False) -> Status:
         """
         Upload a version zip file to byteguide.
@@ -98,6 +121,7 @@ class Uploader:
             status = Status.INVALID_NAME
 
         elif not Validators.is_valid_version(version):
+            log.warning(f"Invalid version {version} for project {name}")
             status = Status.INVALID_VERSION
 
         else:
@@ -142,30 +166,62 @@ class Uploader:
 
         return status
 
-    def delete(self, project: str, version: str) -> t.Tuple[bool, str]:
+    def delete(self, project: str, unique_key: str, version: t.Optional[str] = None) -> t.Tuple[bool, str]:
         """
         Delete a version from the project.
 
         Args:
             project (str): project name.
+            unique_key (str): unique key for the project.
             version (str): version to delete.
 
         Returns:
             t.Tuple[bool, str]: True if the version was deleted successfully, False otherwise and a message.
         """
+        if not MetaDataHandler(project).get_unique_key() == unique_key:
+            return False, "Invalid unique key!"
+
+        if MetaDataHandler(project).read_metadata=={}:
+            return False, f"Project with name {project} not found!"
+
+        # If version is not provided, delete the project, check that all versions are deleted first though
+        if version is None:
+            log.debug(f"Deleting whole project {project}")
+
+            try:
+                versions = MetaDataHandler(project).metadata["versions"]
+                if versions:
+                    return False, f"All versions of project {project} must be deleted before deleting the project!"
+            except KeyError:
+                pass
+
+            try:
+                shutil.rmtree(self.docs_dir / project)
+            except Exception as e:
+                log.error(e)
+                return False, f"Unknown error when deleting project {project}: {str(e)}"
+            return True, f"Project {project} deleted successfully!"
+
+        # If version=all, delete all versions
+        elif version == "all":
+            log.debug(f"Deleting all versions for project {project}")
+            return self._delete_all_versions(project)
+
+        # Move on to delete a specific version
         version_dir = self.docs_dir / project / version
 
         if not version_dir.exists():
-            return False, "Version not found!"
+            return False, f"Version {version} not found for project {project}!"
 
         try:
+            log.debug(f"Deleting version {version} for project {project}")
             shutil.rmtree(version_dir)
         except Exception as e:  # pylint: disable=broad-except
             log.error(e)
-            return False, str(e)
+            return False, f"Unknown error when deleting version: {str(e)}"
 
         MetaDataHandler(project).delete_version(version)
-        return True, "Version deleted successfully!"
+        return True, f"Version {version} for project {project} deleted successfully!"
 
     @staticmethod
     def update_version_metadata(project: str, version: str) -> None:
@@ -305,12 +361,20 @@ class MetaDataHandler:
         Delete a version from the project metadata.
 
         Args:
-            version (str): version to delete.
+            version (str): version to delete. If version is "all", the version key is removed.
         """
-        if version in self.metadata["versions"]:
-            del self.metadata["versions"][version]
-            self.sort_versions()
-            self.save()
+        if version=="all":
+            del self.metadata["versions"]
+        else:
+            if version in self.metadata["versions"]:
+                del self.metadata["versions"][version]
+                self.sort_versions()
+
+                # Remove the versions key if it is empty
+                if self.metadata["versions"]=={}:
+                    del self.metadata["versions"]
+
+        self.save()
 
     def sort_versions(self) -> None:
         """
@@ -353,6 +417,15 @@ class MetaDataHandler:
                     latest_version = version
 
         return latest_version
+
+    def get_unique_key(self) -> str:
+        """
+        Get the unique key for the project.
+
+        Returns:
+            str: unique key for the project.
+        """
+        return self.metadata["unique-key"]
 
     def save(self, metadata: t.Optional[t.Dict] = None) -> None:
         """

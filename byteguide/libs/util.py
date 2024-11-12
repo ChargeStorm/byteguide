@@ -48,7 +48,7 @@ class Validators:
     @staticmethod
     def is_valid_version(version: str) -> bool:
         """Check if a version string is valid."""
-        return Validators.is_alphanumeric(version, [".", "-"])
+        return Validators.is_alphanumeric(version, [".", "-"]) and version != "all"
 
     @staticmethod
     def is_valid_name(name: str) -> bool:

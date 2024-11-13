@@ -104,9 +104,9 @@ def upload():
         return jsonify({"status": "failed", "message": "Request is missing a zip file."}), 400
 
     log.info(f"Got upload request from {request.remote_addr}")
-    log.info(f"Request files: {request.files}")
-    log.info(f"Request args: {request.args}")
-    log.info(f"Request form: {request.form}")
+    log.debug(f"Request files: {request.files}")
+    log.debug(f"Request args: {request.args}")
+    log.debug(f"Request form: {request.form}")
 
     unique_key = request.form.get("unique-key", None)
     reupload = request.form.get("reupload", "false")
@@ -129,7 +129,9 @@ def upload():
 @manage_routes.route("/delete", methods=["POST"])
 def delete():
     """
-    Delete a specific version of a package. Deletion details are sent as a JSON doc.
+    Delete a specific version of a project or a project itself.
+
+    Deletion details are sent as a JSON doc.
 
     Note:
     1. 'Project' must be registered first!
@@ -138,6 +140,7 @@ def delete():
     ```bash
     $ curl -X POST \
         -F project=project \
+        -F unique-key=unique-key \
         -F version=version \
         http://127.0.0.1:5000/manage/delete
     ```
@@ -148,15 +151,16 @@ def delete():
         - `message`: message indicating success or failure of the delete
     """
     log.info(f"Got delete request from {request.remote_addr}")
-    log.info(f"Request files: {request.files}")
-    log.info(f"Request args: {request.args}")
-    log.info(f"Request form: {request.form}")
+    log.debug(f"Request files: {request.files}")
+    log.debug(f"Request args: {request.args}")
+    log.debug(f"Request form: {request.form}")
 
     project = request.form.get("project", None)
     version = request.form.get("version", None)
+    unique_key = request.form.get("unique-key", None)
 
     try:
-        status, message = uploader.delete(project, version)
+        status, message = uploader.delete(project, unique_key, version)
     except Exception as e:  # pylint: disable=broad-except
         log.error(e)
         response = {"status": "failed", "message": str(e)}

@@ -123,3 +123,23 @@ def changelog(project):
         text = f"< '{project_changelog}' missing! >"
 
     return render_template("changelog.html", content=text)
+
+
+@display_routes.route("/metadata/<project>", methods=["GET"])
+def metadata(project):
+    """
+    View the metadata of a project.
+
+    Args:
+        project (str): name of the project whose metadata is to be fetched.
+
+    Example:
+        GET /browse/metadata/<project>
+    """
+    log.debug(f"Requested metadata for project {project}")
+    handler = MetaDataHandler(project)
+
+    if handler.metadata:
+        return jsonify(handler.metadata), 200
+
+    return jsonify({"status": "failed", "message": f"Project {project} not found"}), 404

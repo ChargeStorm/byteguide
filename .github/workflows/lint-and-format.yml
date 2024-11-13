@@ -1,5 +1,4 @@
-name: Pylint
-
+name: Linting and format
 on:
   push:
   pull_request:
@@ -51,3 +50,6 @@ jobs:
 
       - name: Run Pylint
         run: poetry run pylint byteguide/
+
+      - name: Run Black
+        run: poetry run black --check byteguide/

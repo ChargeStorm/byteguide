@@ -166,7 +166,7 @@ class Uploader:
 
         return status
 
-    def delete( # pylint: disable=too-many-return-statements
+    def delete(  # pylint: disable=too-many-return-statements
         self, project: str, unique_key: str, version: t.Optional[str] = None
     ) -> t.Tuple[bool, str]:
         """

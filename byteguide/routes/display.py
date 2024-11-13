@@ -124,6 +124,7 @@ def changelog(project):
 
     return render_template("changelog.html", content=text)
 
+
 @display_routes.route("/metadata/<project>", methods=["GET"])
 def metadata(project):
     """
@@ -136,9 +137,9 @@ def metadata(project):
         GET /browse/metadata/<project>
     """
     log.debug(f"Requested metadata for project {project}")
-    metadata = MetaDataHandler(project).metadata
+    handler = MetaDataHandler(project)
 
-    if metadata:
-        return jsonify(metadata), 200
-    else:
-        return jsonify({"status": "failed", "message": f"Project {project} not found"}), 404
+    if handler.metadata:
+        return jsonify(handler.metadata), 200
+
+    return jsonify({"status": "failed", "message": f"Project {project} not found"}), 404

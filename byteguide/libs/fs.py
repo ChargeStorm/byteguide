@@ -88,7 +88,7 @@ class Uploader:
             if version_dir.is_dir():
                 try:
                     shutil.rmtree(version_dir)
-                except Exception as e: # pylint: disable=broad-except
+                except Exception as e:  # pylint: disable=broad-except
                     log.error(e)
                     return False, f"Unknown error when deleting version {version_dir}: {str(e)}"
 
@@ -166,7 +166,9 @@ class Uploader:
 
         return status
 
-    def delete(self, project: str, unique_key: str, version: t.Optional[str] = None) -> t.Tuple[bool, str]: # pylint: disable=too-many-return-statements
+    def delete( # pylint: disable=too-many-return-statements
+        self, project: str, unique_key: str, version: t.Optional[str] = None
+    ) -> t.Tuple[bool, str]:
         """
         Delete a version from the project.
 
@@ -197,7 +199,7 @@ class Uploader:
 
             try:
                 shutil.rmtree(self.docs_dir / project)
-            except Exception as e: # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 log.error(e)
                 return False, f"Unknown error when deleting project {project}: {str(e)}"
             return True, f"Project {project} deleted successfully!"

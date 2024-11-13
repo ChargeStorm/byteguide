@@ -47,7 +47,7 @@ def register():
     errors = util.validate_register_project(register_project)
 
     if errors:
-        return jsonify({"message": "failed to register project", "errors": errors}), 400
+        return jsonify({"message": "Failed to register project: " + errors, "status": "failed"}), 400
 
     docfiles_dir = Path(config.docfiles_dir)
 

@@ -154,13 +154,14 @@
             <b>📢Note:</b> You can only delete a project if there are no versions left for that project, use "version=all" from above for a swift kill.
           </ol>
         <h3>Get metadata for a project</h3>
-        It's possible to read out the metadata for a project using the following curl command.
+        It's possible to read out the metadata for a project using the below curl command. This can be useful if you have lost the unique key for a project.
         <br>
         <br>
         <pre>
           # Install Azure CLI to get access token, https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
           $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-          $ curl -X GET -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/metadata
+          $ curl -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/browse/metadata/your-project
+
         </pre>
         <h3>Known Issues</h3>
         <div>

@@ -131,7 +131,7 @@
             <pre>
             # Install Azure CLI to get access token, https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
             $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-            $ curl -X POST -F project=your-project -F version=your-version -F unique-key=your-unique-key -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/delete
+            $ curl -X POST -F "project=your-project" -F "version=your-version" -F "unique-key=your-unique-key" -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/delete
             </pre>
             <b>📢Note:</b> You can also delete ALL versions of a project by passing "version=all" to the above curl command.
           </ol>
@@ -149,7 +149,7 @@
             <pre>
             # Install Azure CLI to get access token, https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
             $ ACCESS_TOKEN=$(az account get-access-token --scope a325c352-74f8-48eb-9ca2-3e92712b0fb4/user_impersonation --query accessToken -o tsv)
-            $ curl -X POST -F project=your-project -F unique-key=your-unique-key -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/delete
+            $ curl -X POST -F "project=your-project" -F "unique-key=your-unique-key" -H "Authorization: Bearer $ACCESS_TOKEN" https://docshost.dev.ctek.com/manage/delete
             </pre>
             <b>📢Note:</b> You can only delete a project if there are no versions left for that project, use "version=all" from above for a swift kill.
           </ol>

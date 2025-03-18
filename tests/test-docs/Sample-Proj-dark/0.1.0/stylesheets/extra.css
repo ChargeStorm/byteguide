@@ -1,0 +1,7 @@
+:root {
+    --md-primary-fg-color: #FF9900;
+}
+
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #FF9900;
+}

@@ -12,9 +12,6 @@
               integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
               crossorigin="anonymous">
         <style type="text/css">
-        body {
-            margin-top: 100px;
-        }
 
         .htd-item {
             background-color: #efefef;
@@ -31,75 +28,78 @@
         </style>
     </head>
     <body class="d-flex flex-column h-100">
-        <nav class="navbar fixed-top navbar-expand-lg bg-dark border-bottom border-body"
-             data-bs-theme="dark">
-            <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-                <a class="navbar-brand" href="/">
-                    <span style="color: hsl(0, 0%, 100%); font-weight: bold;">CTEK</span>
-                </a>
-                {% if show_nav_bar_links %}
-                    <ul class="navbar-nav ms-auto mb-4 mb-lg-2">
-                        <li class="nav-item">
-                            <a class="nav-link active"
-                                aria-current="page"
-                                href="/browse"
-                                title="Browse All Projects">Browse
-                            Projects</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary border-0"
-                                role="button"
-                                href="/faq"
-                                title="Answers to some of common questions..."
-                                style="background-color: hsl(36,100%,50%)">How to</a>
-                        </li>
-                    </ul>
-                {% endif %}
-                {% if show_search %}
-                    <form class="d-flex" id="projSearchForm" role="search">
-                        <input class="form-control me-2"
-                               type="search"
-                               id="projSearchTerm"
-                               placeholder="Search for '?' for help..."
-                               aria-label="Search">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </form>
-                {% endif %}
-                {% if show_ver_dropdown %}
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+            <a class="navbar-brand" href="/">
+                <span style="color: hsl(0, 0%, 100%); font-weight: bold;">CTEK</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    {% if show_nav_bar_links %}
                         <ul class="navbar-nav ms-auto mb-4 mb-lg-2">
                             <li class="nav-item">
                                 <a class="nav-link active"
-                                   aria-current="page"
-                                   href="/browse"
-                                   title="Browse All Projects">Browse
+                                    aria-current="page"
+                                    href="/browse"
+                                    title="Browse All Projects">Browse
                                 Projects</a>
                             </li>
-                            <li class="nav-item d-flex">
-                                <div class="vr"></div>
-                            </li>
                             <li class="nav-item">
-                                <a class="nav-link inactive" href={{ doc_url }}>{{ project_info.name }}</a>
-                            </li>
-                            <li class="nav-item d-flex" style="padding-right: 15px;">
-                                <div class="vr"></div>
-                            </li>
-                            <li class="nav-item">
-                                <select class="form-select"
-                                        name="ver_select"
-                                        id="ver_select"
-                                        role="menu"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                    <option value="--select version--">-- Select Version --</option>
-                                    {% for version in project_info.versions | reverse %}
-                                        {% if version != curr_ver %}<option value="{{ project_info.name }}/{{ version }}">{{ version }}</option>{% endif %}
-                                    {% endfor %}
-                                </select>
+                                <a class="btn btn-primary border-0"
+                                    role="button"
+                                    href="/faq"
+                                    title="Answers to some of common questions..."
+                                    style="background-color: hsl(36,100%,50%)">How to</a>
                             </li>
                         </ul>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                    {% if show_search %}
+                        <form class="d-flex ms-auto" id="projSearchForm" role="search">
+                            <input class="form-control me-2"
+                                    type="search"
+                                    id="projSearchTerm"
+                                    placeholder="Search for '?' for help..."
+                                    aria-label="Search">
+                            <button class="btn btn-outline-primary" type="submit">Search</button>
+                        </form>
+                    {% endif %}
+                    {% if show_ver_dropdown %}
+                            <ul class="navbar-nav ms-auto mb-4 mb-lg-2">
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                        aria-current="page"
+                                        href="/browse"
+                                        title="Browse All Projects">Browse
+                                    Projects</a>
+                                </li>
+                                <li class="nav-item d-flex">
+                                    <div class="vr"></div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link inactive" href={{ doc_url }}>{{ project_info.name }}</a>
+                                </li>
+                                <li class="nav-item d-flex" style="padding-right: 15px;">
+                                    <div class="vr"></div>
+                                </li>
+                                <li class="nav-item">
+                                    <select class="form-select"
+                                            name="ver_select"
+                                            id="ver_select"
+                                            role="menu"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                        <option value="--select version--">-- Select Version --</option>
+                                        {% for version in project_info.versions | reverse %}
+                                            {% if version != curr_ver %}<option value="{{ project_info.name }}/{{ version }}">{{ version }}</option>{% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </nav>
         <!-- Search Modal Help -->
@@ -149,11 +149,11 @@
     </div>
 </div>
 {% block body %}{% endblock %}
-<footer class="footer mt-auto py-3 bg-light">
-    <div class="container">
-        <div class="copyright">{{ config.footer|safe }}</div>
-    </div>
-</footer>
+    <!-- <footer class="footer mt-auto mb-0 py-3 bg-light">
+        <div class="container">
+            <div class="copyright">{{ config.footer|safe }}</div>
+        </div>
+    </footer> -->
 <!-- End Footer -->
 <!-- upgrade to latest Jquery CDN -->
 <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"

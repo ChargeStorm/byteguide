@@ -249,6 +249,16 @@ img.resize {
     <b>7. Show</b><br/><br/>
     <img src="{{ url_for('static', filename='guide-1.png')}}" class="resize"/>
     <br/>
+    <hr>
+
+    <h3>Known Issues</h3>
+    <hr/>
+    <div>
+        <ul>
+            <li><strong>Pre-release versions are not supported.</strong> The version is extracted by taking the value after the last <code>-</code> in the filename. If a pre-release tag is used (e.g. <code>myproject-1.0.0-alpha.zip</code>), the program will interpret <code>alpha</code> as the version instead of <code>1.0.0-alpha</code>. Only stable release versions without a <code>-</code> in the version string should be used (e.g. <code>myproject-1.0.0.zip</code>).</li>
+        </ul>
+    </div>
+    <br/>
 
     {% if copyright %}
     <hr>

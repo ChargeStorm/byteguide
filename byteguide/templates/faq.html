@@ -216,6 +216,14 @@
                     </p>
                 </p>
             </li>
+            <li>
+                <strong>Pre-release versions are not supported.</strong>
+                The version is extracted by taking the value after the last <code>-</code> in the filename.
+                If a pre-release tag is used (e.g. <code>myproject-1.0.0-alpha.zip</code>), the program will
+                interpret <code>alpha</code> as the version instead of <code>1.0.0-alpha</code>.
+                Only stable release versions without a <code>-</code> in the version string should be used
+                (e.g. <code>myproject-1.0.0.zip</code>).
+            </li>
     </ol>
 </div>
 <h3>FAQ</h3>
